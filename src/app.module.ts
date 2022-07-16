@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ConfigModule } from '@nestjs/config';
+import { FeatureModule } from './feature/feature.module';
 
 @Module({
-  imports: [],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [
+    FeatureModule,
+    ConfigModule.forRoot(), // was added for included .env
+  ],
 })
 export class AppModule {}
