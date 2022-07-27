@@ -5,7 +5,7 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AppConfigService } from './config/app-config.service';
 import { configEnvKeys } from './config/consts';
-import { runDb } from './db/runDd';
+import { DbRunner } from './db/db-runner';
 import { ErrorExceptionFilter } from './exceptions/error-exception.filter';
 import { HttpExceptionFilter } from './exceptions/http-exception.filter';
 
@@ -29,9 +29,11 @@ const validationPipeOption = {
 };
 
 async function bootstrap() {
-  await runDb();
-
   const app = await NestFactory.create(AppModule);
+  const dbRunner = app.get(DbRunner);
+
+  await dbRunner.runDb();
+
   const configService = app.get(AppConfigService);
   const port = configService.getEnv(configEnvKeys.port) as string;
 

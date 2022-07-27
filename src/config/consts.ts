@@ -8,4 +8,6 @@ export enum configEnvKeys {
   jwtRefreshSecret = 'JWT_REFRESH_SECRET',
   accessTokenExpired = 'accessTokenExpired',
   refreshTokenExpired = 'refreshTokenExpired',
+  mongoURI = 'mongoURI',
+  mongoDBName = 'mongoDBName',
 }

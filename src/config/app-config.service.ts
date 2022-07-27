@@ -66,5 +66,19 @@ export class AppConfigService {
 
       return refreshTokenExpired || '20s';
     }
+
+    if (key === configEnvKeys.mongoURI) {
+      const mongoURI = this.configService.get<string>(configEnvKeys.mongoURI);
+
+      return mongoURI || 'mongodb://0.0.0.0:27017';
+    }
+
+    if (key === configEnvKeys.mongoDBName) {
+      const mongoDBName = this.configService.get<string>(
+        configEnvKeys.mongoDBName,
+      );
+
+      return mongoDBName || 'social';
+    }
   }
 }

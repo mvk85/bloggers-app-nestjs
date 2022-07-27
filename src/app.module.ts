@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import AppConfigModule from './config/config.module';
+import { DbModule } from './db/db.module';
 import { FeatureModule } from './feature/feature.module';
 import { TestingAppModule } from './testing/testing.module';
 
@@ -9,6 +10,7 @@ import { TestingAppModule } from './testing/testing.module';
   imports: [
     ConfigModule.forRoot(), // was added for included .env
     AppConfigModule,
+    DbModule,
     AuthModule,
     FeatureModule,
     TestingAppModule,

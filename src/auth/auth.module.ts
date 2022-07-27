@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { DbModule } from 'src/db/db.module';
 import { FeatureModule } from 'src/feature/feature.module';
 import { AuthController } from './auth.controller';
 import { AuthRepository } from './auth.repository';
@@ -16,7 +15,7 @@ import { IpCheckerService } from './ip-checker/ip-checker.service';
 import { JwtUtility } from './jwt-utility';
 
 @Module({
-  imports: [FeatureModule, DbModule],
+  imports: [FeatureModule],
   controllers: [AuthController],
   providers: [
     EmailAtapter,

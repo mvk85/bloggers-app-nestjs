@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { JwtUtility } from 'src/auth/jwt-utility';
-import { DbModule } from 'src/db/db.module';
 import { AdminBasicAuthGuard } from 'src/guards/admin-basic-auth.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { NotExistsUserByEmailRule } from 'src/validators/not-exist-user-email.rule';
@@ -23,7 +22,6 @@ import { UsersRepository } from './users/users.repository';
 import { UsersService } from './users/users.service';
 
 @Module({
-  imports: [DbModule],
   controllers: [
     BloggersController,
     CommentsController,

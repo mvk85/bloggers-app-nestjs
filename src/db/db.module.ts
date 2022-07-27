@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { MongooseModelNamed } from './const';
 import {
   BadRefreshTokensModel,
@@ -8,6 +8,7 @@ import {
   RequestsModel,
   UsersModel,
 } from './models.mongoose';
+import { DbRunner } from './db-runner';
 
 const mongooseModelProviders = [
   {
@@ -36,8 +37,9 @@ const mongooseModelProviders = [
   },
 ];
 
+@Global()
 @Module({
-  providers: mongooseModelProviders,
-  exports: mongooseModelProviders,
+  providers: [...mongooseModelProviders, DbRunner],
+  exports: [...mongooseModelProviders, DbRunner],
 })
 export class DbModule {}
