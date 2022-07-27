@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { removeObjectIdOption } from 'src/const';
 import { MongooseModelNamed } from 'src/db/const';
 import { PostsModel } from 'src/db/models.mongoose';
@@ -34,6 +34,16 @@ export class PostsRepository {
 
   async getPostById(id: string): Promise<Post | null> {
     const post = await this.postsModel.findOne({ id }, removeObjectIdOption);
+
+    return post;
+  }
+
+  async getPostByIdOrThrow(id: string): Promise<Post | null> {
+    const post = await this.getPostById(id);
+
+    if (!post) {
+      throw new NotFoundException();
+    }
 
     return post;
   }

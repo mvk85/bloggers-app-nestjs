@@ -40,6 +40,16 @@ export class BloggersRepository {
     return blogger;
   }
 
+  async getBloggerByIdOrThrow(id: string): Promise<Blogger | null> {
+    const blogger = await this.getBloggerById(id);
+
+    if (!blogger) {
+      throw new Error("Blogger didn't find by id");
+    }
+
+    return blogger;
+  }
+
   async createBlogger(newBlogger: Blogger): Promise<Blogger | null> {
     await this.bloggersModel.create(newBlogger);
 

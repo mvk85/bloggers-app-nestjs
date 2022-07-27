@@ -11,9 +11,14 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AdminBasicAuthGuard } from 'src/guards/admin-basic-auth.guard';
 import { PostsService } from '../posts/posts.service';
 import { BloggersService } from './bloggers.service';
+import { BloggerParamsValidatorModel } from './validators/blogger-params.validator';
+import { BloggerValidatorModel } from './validators/blogger.validator';
+import { PostValidatorModel } from './validators/post.validator';
 
 @Controller('bloggers')
 export class BloggersController {
@@ -45,10 +50,11 @@ export class BloggersController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
-  async createBlogger(@Body() body: { name: string; youtubeUrl: string }) {
+  @UseGuards(AdminBasicAuthGuard)
+  async createBlogger(@Body() inputBloggerModel: BloggerValidatorModel) {
     const newBlogger = await this.bloggersService.createBlogger(
-      body.name,
-      body.youtubeUrl,
+      inputBloggerModel.name,
+      inputBloggerModel.youtubeUrl,
     );
 
     return newBlogger;
@@ -68,14 +74,14 @@ export class BloggersController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AdminBasicAuthGuard)
   async updateBloggerById(
     @Param('id') id: string,
-    @Body('name') name?: string,
-    @Body('youtubeUrl') youtubeUrl?: string,
+    @Body() inputBloggerModel: BloggerValidatorModel,
   ) {
     const isUpdated = await this.bloggersService.updateBloggerById(id, {
-      name,
-      youtubeUrl,
+      name: inputBloggerModel.name,
+      youtubeUrl: inputBloggerModel.youtubeUrl,
     });
 
     if (!isUpdated) {
@@ -87,6 +93,7 @@ export class BloggersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AdminBasicAuthGuard)
   async deleteBloggerById(@Param('id') id: string) {
     const isDeleted = await this.bloggersService.deleteBloggerById(id);
 
@@ -100,11 +107,11 @@ export class BloggersController {
   @Get(':id/posts')
   @HttpCode(HttpStatus.OK)
   async getPostsByBloggerId(
-    @Param('id') id: string,
+    @Param() params: BloggerParamsValidatorModel,
     @Query('PageNumber') PageNumber?: string,
     @Query('PageSize') PageSize?: string,
   ) {
-    const response = await this.bloggersService.getPostsByBloggerId(id, {
+    const response = await this.bloggersService.getPostsByBloggerId(params.id, {
       PageNumber,
       PageSize,
     });
@@ -114,20 +121,17 @@ export class BloggersController {
 
   @Post(':id/posts')
   @HttpCode(HttpStatus.CREATED)
+  @UseGuards(AdminBasicAuthGuard)
   async createPost(
-    @Param('id') bloggerId: string,
+    @Param() params: BloggerParamsValidatorModel,
     @Body()
-    requestBody: {
-      title: string;
-      shortDescription: string;
-      content: string;
-    },
+    requestBody: PostValidatorModel,
   ) {
     const bodyFields = {
       title: requestBody.title,
       shortDescription: requestBody.shortDescription,
       content: requestBody.content,
-      bloggerId,
+      bloggerId: params.id,
     };
 
     const newPost = await this.postsService.createPost(bodyFields);

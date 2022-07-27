@@ -8,8 +8,13 @@ import {
   HttpStatus,
   Param,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from 'src/guards/auth.guard';
 import { CommentsService } from './comments.service';
+import { CommentCredentialsGuard } from './guards/comment-credentials.guard';
+import { CommentParamsValidatorModel } from './validators/comment-params.validator';
+import { CommentValidatorModel } from './validators/comment.validator';
 
 @Controller('comments')
 export class CommentsController {
@@ -28,8 +33,9 @@ export class CommentsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  async deleteById(@Param('id') id: string) {
-    const isDeleted = await this.commentsService.deleteById(id);
+  @UseGuards(AuthGuard, CommentCredentialsGuard) // TODO правильно ли так прокидывать userId
+  async deleteById(@Param() params: CommentParamsValidatorModel) {
+    const isDeleted = await this.commentsService.deleteById(params.id);
 
     if (!isDeleted) {
       throw new BadRequestException();
@@ -40,12 +46,13 @@ export class CommentsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(AuthGuard)
   async updateById(
-    @Param('id') commentId: string,
-    @Body('content') content: string,
+    @Param() params: CommentParamsValidatorModel,
+    @Body() bodyFields: CommentValidatorModel,
   ) {
-    const isUpdated = await this.commentsService.updateById(commentId, {
-      content,
+    const isUpdated = await this.commentsService.updateById(params.id, {
+      content: bodyFields.content,
     });
 
     if (!isUpdated) {

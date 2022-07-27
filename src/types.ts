@@ -15,3 +15,8 @@ export type PaginationData = {
 export type ResponseBloggers = PaginationData & {
   items: Blogger[];
 };
+
+export type UserGuardEntity = {
+  userId: string;
+  userLogin: string;
+};

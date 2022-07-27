@@ -39,11 +39,21 @@ export class CommentsRepository {
     return createdComment;
   }
 
-  async getCommentByid(id: string) {
+  async getCommentById(id: string): Promise<Comment | null> {
     const comment = await this.commentsModel.findOne(
       { id },
       commentsProjection,
     );
+
+    return comment;
+  }
+
+  async getCommentByIdOrThrow(id: string): Promise<Comment | null> {
+    const comment = await this.getCommentById(id);
+
+    if (!comment) {
+      throw new Error("Comment didn't find by id");
+    }
 
     return comment;
   }

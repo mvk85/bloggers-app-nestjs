@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from './const';
 import { PaginationParams } from './types';
 

@@ -12,7 +12,7 @@ export class CommentsService {
   }
 
   async getById(id: string) {
-    const comments = await this.commentsRepository.getCommentByid(id);
+    const comments = await this.commentsRepository.getCommentById(id);
 
     return comments;
   }
