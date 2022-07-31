@@ -12,10 +12,10 @@ export class EmailAtapter {
   constructor(private appConfigService: AppConfigService) {
     this.emailAddress = this.appConfigService.getEnv(
       configEnvKeys.emailAddressApp,
-    ) as string;
+    );
     this.emailPassword = this.appConfigService.getEnv(
       configEnvKeys.emailPasswordApp,
-    ) as string;
+    );
   }
 
   async sendEmail(

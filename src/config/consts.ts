@@ -10,4 +10,6 @@ export enum configEnvKeys {
   refreshTokenExpired = 'refreshTokenExpired',
   mongoURI = 'mongoURI',
   mongoDBName = 'mongoDBName',
+  adminLogin = 'adminLogin',
+  adminPassword = 'adminPassword',
 }

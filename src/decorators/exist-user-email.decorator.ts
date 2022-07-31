@@ -2,7 +2,7 @@ import { registerDecorator, ValidationOptions } from 'class-validator';
 import {
   existsUserByEmailKey,
   ExistsUserByEmailRule,
-} from './exist-user-email.rule';
+} from '../validators/exist-user-email.validator';
 
 export function ExistsUserByEmail(validationOptions?: ValidationOptions) {
   return function (object: any, propertyName: string) {

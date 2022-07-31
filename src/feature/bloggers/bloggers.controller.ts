@@ -13,7 +13,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { AdminBasicAuthGuard } from 'src/guards/admin-basic-auth.guard';
+import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
 import { PostsService } from '../posts/posts.service';
 import { BloggersService } from './bloggers.service';
 import { BloggerParamsValidatorModel } from './validators/blogger-params.validator';
@@ -50,7 +50,7 @@ export class BloggersController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AdminBasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async createBlogger(@Body() inputBloggerModel: BloggerValidatorModel) {
     const newBlogger = await this.bloggersService.createBlogger(
       inputBloggerModel.name,
@@ -74,7 +74,7 @@ export class BloggersController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(AdminBasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async updateBloggerById(
     @Param('id') id: string,
     @Body() inputBloggerModel: BloggerValidatorModel,
@@ -93,7 +93,7 @@ export class BloggersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(AdminBasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async deleteBloggerById(@Param('id') id: string) {
     const isDeleted = await this.bloggersService.deleteBloggerById(id);
 
@@ -121,7 +121,7 @@ export class BloggersController {
 
   @Post(':id/posts')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AdminBasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async createPost(
     @Param() params: BloggerParamsValidatorModel,
     @Body()

@@ -6,8 +6,8 @@ import { AppModule } from './app.module';
 import { AppConfigService } from './config/app-config.service';
 import { configEnvKeys } from './config/consts';
 import { DbRunner } from './db/db-runner';
-import { ErrorExceptionFilter } from './exceptions/error-exception.filter';
-import { HttpExceptionFilter } from './exceptions/http-exception.filter';
+import { ErrorExceptionFilter } from './exception-filters/error-exception.filter';
+import { HttpExceptionFilter } from './exception-filters/http-exception.filter';
 
 const validationPipeOption = {
   stopAtFirstError: true,

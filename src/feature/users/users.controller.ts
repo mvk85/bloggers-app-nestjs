@@ -12,7 +12,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { AdminBasicAuthGuard } from 'src/guards/admin-basic-auth.guard';
+import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
 import { UsersService } from './users.service';
 import { UserValidatorModel } from './validators/user.validator';
 
@@ -36,7 +36,7 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AdminBasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async createUser(
     @Body()
     { login, password, email }: UserValidatorModel,
@@ -52,7 +52,7 @@ export class UsersController {
 
   @Delete(':userId')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(AdminBasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async deleteUserById(@Param('userId') userId: string) {
     const isDeleted = await this.usersService.deleteUserById(userId);
 

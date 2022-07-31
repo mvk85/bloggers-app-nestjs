@@ -1,5 +1,5 @@
 import { Length } from 'class-validator';
-import { IsNotEmptyString } from 'src/validators/is-not-empty-string';
+import { IsNotEmptyString } from 'src/decorators/is-not-empty-string.decorator';
 
 export class UserSignInValidatorModel {
   @IsNotEmptyString()

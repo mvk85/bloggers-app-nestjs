@@ -1,6 +1,6 @@
 import { Length } from 'class-validator';
 import { BloggerExistsById } from 'src/feature/bloggers/decorators/blogger-exist.decorator';
-import { IsNotEmptyString } from 'src/validators/is-not-empty-string';
+import { IsNotEmptyString } from 'src/decorators/is-not-empty-string.decorator';
 
 export class PostValidatorModel {
   @IsNotEmptyString()

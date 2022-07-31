@@ -1,8 +1,7 @@
-import * as jwt from 'jsonwebtoken';
-import { SignOptions } from 'jsonwebtoken';
 import { Injectable } from '@nestjs/common';
 import { configEnvKeys } from 'src/config/consts';
 import { AppConfigService } from 'src/config/app-config.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class JwtUtility {
@@ -14,19 +13,22 @@ export class JwtUtility {
 
   private refreshTokenExpired: string;
 
-  constructor(private appConfigService: AppConfigService) {
+  constructor(
+    private appConfigService: AppConfigService,
+    private readonly jwtService: JwtService,
+  ) {
     this.jwtAccessSecret = this.appConfigService.getEnv(
       configEnvKeys.jwtAccessSecret,
-    ) as string;
+    );
     this.jwtRefreshSecret = this.appConfigService.getEnv(
       configEnvKeys.jwtRefreshSecret,
-    ) as string;
+    );
     this.accessTokenExpired = this.appConfigService.getEnv(
       configEnvKeys.accessTokenExpired,
-    ) as string;
+    );
     this.refreshTokenExpired = this.appConfigService.getEnv(
       configEnvKeys.refreshTokenExpired,
-    ) as string;
+    );
   }
 
   createJWTTokens(userId: string) {
@@ -54,11 +56,12 @@ export class JwtUtility {
 
   createJWTToken(userId: string, expired: string, jwtSecretKey: string) {
     const payload = { userId };
-    const options: SignOptions = {
+    const options = {
+      secret: jwtSecretKey,
       expiresIn: expired,
     };
 
-    const jwtToken = jwt.sign(payload, jwtSecretKey, options);
+    const jwtToken = this.jwtService.sign(payload, options);
 
     return jwtToken;
   }
@@ -68,7 +71,9 @@ export class JwtUtility {
       const secretOrPublicKey = isRefreshToken
         ? this.jwtRefreshSecret
         : this.jwtAccessSecret;
-      const result: any = jwt.verify(token, secretOrPublicKey);
+      const result: any = this.jwtService.verify(token, {
+        secret: secretOrPublicKey,
+      });
 
       return result.userId;
     } catch (error) {
@@ -78,7 +83,7 @@ export class JwtUtility {
 
   checkRefreshToken(token: string): boolean {
     try {
-      jwt.verify(token, this.jwtRefreshSecret);
+      this.jwtService.verify(token, { secret: this.jwtRefreshSecret });
 
       return true;
     } catch (_) {

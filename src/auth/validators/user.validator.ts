@@ -1,8 +1,8 @@
 import { Length, Matches } from 'class-validator';
 import { regexEmail } from 'src/const';
-import { IsNotEmptyString } from 'src/validators/is-not-empty-string';
-import { NotExistsUserByEmail } from 'src/validators/not-exist-user-email.decorator';
-import { UserExistsByLogin } from 'src/validators/user-exist-login.decorator';
+import { IsNotEmptyString } from 'src/decorators/is-not-empty-string.decorator';
+import { NotExistsUserByEmail } from 'src/decorators/not-exist-user-email.decorator';
+import { UserExistsByLogin } from 'src/decorators/user-exist-login.decorator';
 
 export class UserValidatorModel {
   @IsNotEmptyString()

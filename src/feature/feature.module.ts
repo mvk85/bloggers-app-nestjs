@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtModuleAsyncOptions } from 'src/auth/jwt-module-options';
 import { JwtUtility } from 'src/auth/jwt-utility';
-import { AdminBasicAuthGuard } from 'src/guards/admin-basic-auth.guard';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { NotExistsUserByEmailRule } from 'src/validators/not-exist-user-email.rule';
-import { UserExistsByLoginRule } from 'src/validators/user-exist-login.rule';
+import { BasicStrategy } from 'src/auth/strategies/basic-auth.strategy';
+import { NotExistsUserByEmailRule } from 'src/validators/not-exist-user-email.validator';
+import { UserExistsByLoginRule } from 'src/validators/user-exist-login.validator';
 import { BloggersController } from './bloggers/bloggers.controller';
 import { BloggersRepository } from './bloggers/bloggers.repository';
 import { BloggersService } from './bloggers/bloggers.service';
@@ -22,6 +23,7 @@ import { UsersRepository } from './users/users.repository';
 import { UsersService } from './users/users.service';
 
 @Module({
+  imports: [JwtModule.registerAsync(jwtModuleAsyncOptions)],
   controllers: [
     BloggersController,
     CommentsController,
@@ -41,12 +43,11 @@ import { UsersService } from './users/users.service';
     PostExistsByIdRule,
     NotExistsUserByEmailRule,
     UserExistsByLoginRule,
-    AuthGuard,
     JwtUtility, // TODO нормально ли так подключать напрямую в несколько мест
     // JwtUtility нужен для AuthGuard в этом модуле
-    AdminBasicAuthGuard,
     CommentCredentialsGuard,
     CommentExistsByIdRule,
+    BasicStrategy,
   ],
   exports: [
     UsersService, // TODO избавиться от экспорта сервиса

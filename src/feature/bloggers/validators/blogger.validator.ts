@@ -1,5 +1,5 @@
 import { IsString, Length, Matches, MaxLength } from 'class-validator';
-import { IsNotEmptyString } from 'src/validators/is-not-empty-string';
+import { IsNotEmptyString } from 'src/decorators/is-not-empty-string.decorator';
 
 const regexUrl =
   /^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/;

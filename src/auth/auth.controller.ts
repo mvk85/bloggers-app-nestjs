@@ -12,12 +12,11 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AppConfigService } from 'src/config/app-config.service';
-import { configEnvKeys } from 'src/config/consts';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { UserGuardEntity } from 'src/types';
-import { UserByAuth } from 'src/validators/user.decorator';
+import { CurrentUserIdFromJwt } from 'src/decorators/current-user-id.decorator';
 import { AuthService } from './auth.service';
 import { IpCheckerGuard } from './guards/ip-checker.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { UserSignInValidatorModel } from './validators/user-login.validator';
 import { UserValidatorModel } from './validators/user.validator';
@@ -30,13 +29,11 @@ export class AuthController {
     protected authService: AuthService,
     private appConfigService: AppConfigService,
   ) {
-    this.isProduction = this.appConfigService.getEnv(
-      configEnvKeys.isProduction,
-    ) as boolean;
+    this.isProduction = this.appConfigService.isProduction;
   }
 
   @Post('login')
-  @UseGuards(IpCheckerGuard)
+  @UseGuards(IpCheckerGuard, LocalAuthGuard)
   async login(
     @Body() requestBody: UserSignInValidatorModel,
     @Res({ passthrough: true }) response: Response,
@@ -139,9 +136,9 @@ export class AuthController {
 
   @Post('me')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard)
-  async me(@UserByAuth() user: UserGuardEntity) {
-    const meData = await this.authService.me(user.userId);
+  @UseGuards(JwtAuthGuard)
+  async me(@CurrentUserIdFromJwt() userId: string) {
+    const meData = await this.authService.me(userId);
 
     if (!meData) {
       throw new BadRequestException();

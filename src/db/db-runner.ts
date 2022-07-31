@@ -10,12 +10,8 @@ export class DbRunner {
   private dbName: string;
 
   constructor(private appConfigService: AppConfigService) {
-    this.mongoUri = this.appConfigService.getEnv(
-      configEnvKeys.mongoURI,
-    ) as string;
-    this.dbName = this.appConfigService.getEnv(
-      configEnvKeys.mongoDBName,
-    ) as string;
+    this.mongoUri = this.appConfigService.getEnv(configEnvKeys.mongoURI);
+    this.dbName = this.appConfigService.getEnv(configEnvKeys.mongoDBName);
   }
 
   async runDb() {

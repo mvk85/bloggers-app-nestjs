@@ -10,7 +10,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CommentsService } from './comments.service';
 import { CommentCredentialsGuard } from './guards/comment-credentials.guard';
 import { CommentParamsValidatorModel } from './validators/comment-params.validator';
@@ -33,7 +33,7 @@ export class CommentsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(AuthGuard, CommentCredentialsGuard) // TODO правильно ли так прокидывать userId
+  @UseGuards(JwtAuthGuard, CommentCredentialsGuard)
   async deleteById(@Param() params: CommentParamsValidatorModel) {
     const isDeleted = await this.commentsService.deleteById(params.id);
 
@@ -46,7 +46,7 @@ export class CommentsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   async updateById(
     @Param() params: CommentParamsValidatorModel,
     @Body() bodyFields: CommentValidatorModel,

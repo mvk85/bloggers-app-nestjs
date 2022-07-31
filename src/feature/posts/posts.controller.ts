@@ -17,14 +17,17 @@ import { PostsService } from './posts.service';
 import { CommentValidatorModel } from '../comments/validators/comment.validator';
 import { PostParamsValidatorModel } from './validators/post-params.validator';
 import { PostValidatorModel } from './validators/post.validator';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { UserByAuth } from 'src/validators/user.decorator';
-import { UserGuardEntity } from 'src/types';
-import { AdminBasicAuthGuard } from 'src/guards/admin-basic-auth.guard';
+import { CurrentUserIdFromJwt } from 'src/decorators/current-user-id.decorator';
+import { UsersRepository } from '../users/users.repository';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
 
 @Controller('posts')
 export class PostsController {
-  constructor(protected postsService: PostsService) {}
+  constructor(
+    private postsService: PostsService,
+    private usersRepository: UsersRepository,
+  ) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
@@ -42,7 +45,7 @@ export class PostsController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AdminBasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async createPost(@Body() bodyFields: PostValidatorModel) {
     const newPost = await this.postsService.createPost(bodyFields);
 
@@ -67,7 +70,7 @@ export class PostsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(AdminBasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async updatePostById(
     @Param() postParams: PostParamsValidatorModel,
     @Body() bodyFields: PostValidatorModel,
@@ -86,7 +89,7 @@ export class PostsController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(AdminBasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async deletePostById(@Param() postParams: PostParamsValidatorModel) {
     const isDeleted = await this.postsService.deletePostById(postParams.id);
 
@@ -99,16 +102,17 @@ export class PostsController {
 
   @Post(':id/comments')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   async createComment(
     @Param() postParams: PostParamsValidatorModel,
     @Body() bodyFields: CommentValidatorModel,
-    @UserByAuth() user: UserGuardEntity,
+    @CurrentUserIdFromJwt() userId: string,
   ) {
+    const userDb = await this.usersRepository.findUserByUserId(userId);
     const newComment = await this.postsService.createComment({
       content: bodyFields.content,
-      userId: user.userId,
-      userLogin: user.userLogin,
+      userId,
+      userLogin: userDb.login,
       postId: postParams.id,
     });
 

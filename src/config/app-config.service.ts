@@ -6,6 +6,12 @@ import { configEnvKeys } from './consts';
 export class AppConfigService {
   constructor(private configService: ConfigService) {}
 
+  public get isProduction() {
+    const nodeEnv = this.configService.get<string>(configEnvKeys.nodeEnv);
+
+    return nodeEnv === 'Production';
+  }
+
   public getEnv(key: configEnvKeys) {
     if (key === configEnvKeys.port) {
       const port = this.configService.get<string>(configEnvKeys.port);
@@ -13,10 +19,10 @@ export class AppConfigService {
       return port || '3000';
     }
 
-    if (key === configEnvKeys.isProduction) {
+    if (key === configEnvKeys.nodeEnv) {
       const nodeEnv = this.configService.get<string>(configEnvKeys.nodeEnv);
 
-      return nodeEnv === 'Production';
+      return nodeEnv;
     }
 
     if (key === configEnvKeys.emailAddressApp) {
@@ -79,6 +85,22 @@ export class AppConfigService {
       );
 
       return mongoDBName || 'social';
+    }
+
+    if (key === configEnvKeys.adminLogin) {
+      const adminLogin = this.configService.get<string>(
+        configEnvKeys.adminLogin,
+      );
+
+      return adminLogin || 'admin';
+    }
+
+    if (key === configEnvKeys.adminPassword) {
+      const adminPassword = this.configService.get<string>(
+        configEnvKeys.adminPassword,
+      );
+
+      return adminPassword || 'qwerty';
     }
   }
 }
