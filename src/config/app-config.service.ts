@@ -62,7 +62,7 @@ export class AppConfigService {
         configEnvKeys.accessTokenExpired,
       );
 
-      return accessTokenExpired || '10s';
+      return accessTokenExpired || '5m';
     }
 
     if (key === configEnvKeys.refreshTokenExpired) {
@@ -70,7 +70,7 @@ export class AppConfigService {
         configEnvKeys.refreshTokenExpired,
       );
 
-      return refreshTokenExpired || '20s';
+      return refreshTokenExpired || '20m';
     }
 
     if (key === configEnvKeys.mongoURI) {
