@@ -30,6 +30,7 @@ export const postsSchema = new mongoose.Schema<PostDbEntity>({
   content: { type: String, required: true },
   bloggerId: { type: String, required: true },
   bloggerName: { type: String, required: true },
+  addedAt: { type: Date, requered: true },
   // TODO maybe use sub-schema will be better for likes?
   likes: {
     status: {
