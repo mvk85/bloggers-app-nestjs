@@ -34,6 +34,7 @@ export class AuthController {
 
   @Post('login')
   @UseGuards(IpCheckerGuard, LocalAuthGuard)
+  @HttpCode(HttpStatus.OK)
   async login(
     @Body() requestBody: UserSignInValidatorModel,
     @Res({ passthrough: true }) response: Response,
