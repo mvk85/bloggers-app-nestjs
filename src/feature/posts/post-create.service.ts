@@ -20,7 +20,7 @@ export class PostCreateService {
   async createPost(
     fields: PostCreateFields,
   ): Promise<PostResponseEntity | null> {
-    this.checkBlogger(fields.bloggerId);
+    await this.checkBlogger(fields.bloggerId);
 
     const newPosts: PostDbEntity = this.makePostEntity(fields);
     const createdPost = await this.postsRepository.createPost(newPosts);
