@@ -18,7 +18,9 @@ export class CommentsService {
   async getById(id: string) {
     const comment = await this.commentsRepository.getCommentById(id);
 
-    return this.commentsLikesMapper.normalizeCommentLikes(comment);
+    return comment
+      ? this.commentsLikesMapper.normalizeCommentLikes(comment)
+      : null;
   }
 
   async updateById(id: string, fields: { content: string }) {
