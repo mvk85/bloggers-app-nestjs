@@ -1,6 +1,6 @@
 import { PostExistsById } from '../decorators/post-exist.decorator';
 
-export class PostParamsValidatorModel {
+export class PostIdParamValidatorModel {
   @PostExistsById()
   id: string;
 }

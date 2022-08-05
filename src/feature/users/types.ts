@@ -1,4 +1,4 @@
-import { IdType, User } from 'src/db/types';
+import { IdType, UserDbEntity } from 'src/db/types';
 import { PaginationData } from 'src/types';
 
 export type CreatedUserType = {
@@ -8,7 +8,7 @@ export type CreatedUserType = {
 };
 
 export type ResponseUsers = PaginationData & {
-  items: User[];
+  items: UserDbEntity[];
 };
 
 export type CreateUserFields = {

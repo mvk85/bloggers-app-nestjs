@@ -2,7 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { projectionCreateUserItem, projectionUserItem } from 'src/const';
 import { MongooseModelNamed } from 'src/db/const';
 import { UsersModel } from 'src/db/models.mongoose';
-import { User } from 'src/db/types';
+import { UserDbEntity } from 'src/db/types';
 import { CreatedUserType } from './types';
 
 @Injectable()
@@ -12,7 +12,7 @@ export class UsersRepository {
     private usersModel: typeof UsersModel,
   ) {}
 
-  async getUsers(skip: number, limit: number): Promise<User[]> {
+  async getUsers(skip: number, limit: number): Promise<UserDbEntity[]> {
     const users = await this.usersModel
       .find({})
       .select(projectionUserItem)
@@ -29,7 +29,7 @@ export class UsersRepository {
     return count;
   }
 
-  async createUser(newUser: User): Promise<CreatedUserType | null> {
+  async createUser(newUser: UserDbEntity): Promise<CreatedUserType | null> {
     await this.usersModel.create(newUser);
 
     const user = await this.usersModel
@@ -39,7 +39,9 @@ export class UsersRepository {
     return user;
   }
 
-  async makeRegisteredUser(newUser: User): Promise<CreatedUserType | null> {
+  async makeRegisteredUser(
+    newUser: UserDbEntity,
+  ): Promise<CreatedUserType | null> {
     await this.usersModel.create(newUser);
 
     const user = await this.usersModel
@@ -55,13 +57,13 @@ export class UsersRepository {
     return result.deletedCount === 1;
   }
 
-  async findUserByLogin(login: string): Promise<User | null> {
+  async findUserByLogin(login: string): Promise<UserDbEntity | null> {
     const user = await this.usersModel.findOne({ login });
 
     return user;
   }
 
-  async findUserByLoginOrThrow(login: string): Promise<User | null> {
+  async findUserByLoginOrThrow(login: string): Promise<UserDbEntity | null> {
     const user = this.findUserByLogin(login);
 
     if (!user) {
@@ -71,13 +73,13 @@ export class UsersRepository {
     return user;
   }
 
-  async findUserByEmail(email: string): Promise<User | null> {
+  async findUserByEmail(email: string): Promise<UserDbEntity | null> {
     const user = await this.usersModel.findOne({ email });
 
     return user;
   }
 
-  async findUserByEmailOrThrow(email: string): Promise<User | null> {
+  async findUserByEmailOrThrow(email: string): Promise<UserDbEntity | null> {
     const user = this.findUserByEmail(email);
 
     if (!user) {
@@ -87,13 +89,13 @@ export class UsersRepository {
     return user;
   }
 
-  async findUserByUserId(id: string): Promise<User | null> {
+  async findUserByUserId(id: string): Promise<UserDbEntity | null> {
     const user = await this.usersModel.findOne({ id });
 
     return user;
   }
 
-  async findUserByConfirmationCode(code: string): Promise<User | null> {
+  async findUserByConfirmationCode(code: string): Promise<UserDbEntity | null> {
     const user = await this.usersModel.findOne({ confirmCode: code });
 
     return user;

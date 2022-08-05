@@ -14,19 +14,26 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
-import { CommentValidatorModel } from '../comments/validators/comment.validator';
-import { PostParamsValidatorModel } from './validators/post-params.validator';
-import { PostValidatorModel } from './validators/post.validator';
+import { CommentValidatorModel } from '../comments/dto/comment.validator';
+import { PostIdParamValidatorModel } from './dto/post-params.dto';
+import { PostValidatorModel } from './dto/post.dto';
 import { CurrentUserIdFromJwt } from 'src/decorators/current-user-id.decorator';
 import { UsersRepository } from '../users/users.repository';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
+import { PostLikeDto } from './dto/post-like.dto';
+import { PostLikesService } from './post-like.service';
+import { PostCreateService } from './post-create.service';
+import { CommentsByPostService } from './comments-by-post.service';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private postsService: PostsService,
     private usersRepository: UsersRepository,
+    private postLikesService: PostLikesService,
+    private postCreateService: PostCreateService,
+    private commentsByPostService: CommentsByPostService,
   ) {}
 
   @Get()
@@ -47,7 +54,7 @@ export class PostsController {
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(BasicAuthGuard)
   async createPost(@Body() bodyFields: PostValidatorModel) {
-    const newPost = await this.postsService.createPost(bodyFields);
+    const newPost = await this.postCreateService.createPost(bodyFields);
 
     if (!newPost) {
       throw new BadRequestException();
@@ -72,7 +79,7 @@ export class PostsController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(BasicAuthGuard)
   async updatePostById(
-    @Param() postParams: PostParamsValidatorModel,
+    @Param() postParams: PostIdParamValidatorModel,
     @Body() bodyFields: PostValidatorModel,
   ) {
     const isUpdated = await this.postsService.updatePostById(
@@ -90,7 +97,7 @@ export class PostsController {
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(BasicAuthGuard)
-  async deletePostById(@Param() postParams: PostParamsValidatorModel) {
+  async deletePostById(@Param() postParams: PostIdParamValidatorModel) {
     const isDeleted = await this.postsService.deletePostById(postParams.id);
 
     if (!isDeleted) {
@@ -104,12 +111,12 @@ export class PostsController {
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
   async createComment(
-    @Param() postParams: PostParamsValidatorModel,
+    @Param() postParams: PostIdParamValidatorModel,
     @Body() bodyFields: CommentValidatorModel,
     @CurrentUserIdFromJwt() userId: string,
   ) {
     const userDb = await this.usersRepository.findUserByUserId(userId);
-    const newComment = await this.postsService.createComment({
+    const newComment = await this.commentsByPostService.createComment({
       content: bodyFields.content,
       userId,
       userLogin: userDb.login,
@@ -126,11 +133,11 @@ export class PostsController {
   @Get(':id/comments')
   @HttpCode(HttpStatus.OK)
   async getCommentsByPostId(
-    @Param() postParams: PostParamsValidatorModel,
+    @Param() postParams: PostIdParamValidatorModel,
     @Query('PageNumber') pageNumber?: string,
     @Query('PageSize') pageSize?: string,
   ) {
-    const response = await this.postsService.getCommentsByPostId(
+    const response = await this.commentsByPostService.getCommentsByPostId(
       postParams.id,
       {
         PageNumber: pageNumber,
@@ -139,5 +146,21 @@ export class PostsController {
     );
 
     return response;
+  }
+
+  @Put(':id/like-status')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  async setLike(
+    @Body() likeDto: PostLikeDto,
+    @Param() postIdParam: PostIdParamValidatorModel,
+    @CurrentUserIdFromJwt() userId: string,
+  ) {
+    await this.postLikesService.setLike(
+      likeDto.likeStatus,
+      userId,
+      postIdParam.id,
+    );
+    return;
   }
 }

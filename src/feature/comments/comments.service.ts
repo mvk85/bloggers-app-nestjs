@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { CommentsLikesMapper } from '../posts/likes-comment.mapper';
 import { CommentsRepository } from './comments.repository';
 
 @Injectable()
 export class CommentsService {
-  constructor(protected commentsRepository: CommentsRepository) {}
+  constructor(
+    private commentsRepository: CommentsRepository,
+    private commentsLikesMapper: CommentsLikesMapper,
+  ) {}
 
   async deleteById(id: string) {
     const isDeleted = await this.commentsRepository.deleteCommentById(id);
@@ -12,9 +16,9 @@ export class CommentsService {
   }
 
   async getById(id: string) {
-    const comments = await this.commentsRepository.getCommentById(id);
+    const comment = await this.commentsRepository.getCommentById(id);
 
-    return comments;
+    return this.commentsLikesMapper.normalizeCommentLikes(comment);
   }
 
   async updateById(id: string, fields: { content: string }) {

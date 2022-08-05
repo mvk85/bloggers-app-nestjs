@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
-import { User } from 'src/db/types';
+import { UserDbEntity } from 'src/db/types';
 import { PaginationParams } from 'src/types';
 import {
   generateConfirmCode,
@@ -33,19 +33,19 @@ export class UsersService {
     };
   }
 
-  async getUserById(id: string): Promise<User | null> {
+  async getUserById(id: string): Promise<UserDbEntity | null> {
     return this.usersRepository.findUserByUserId(id);
   }
 
-  async getUserByLogin(login: string): Promise<User | null> {
+  async getUserByLogin(login: string): Promise<UserDbEntity | null> {
     return this.usersRepository.findUserByLogin(login);
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
+  async getUserByEmail(email: string): Promise<UserDbEntity | null> {
     return this.usersRepository.findUserByEmail(email);
   }
 
-  async getUserByConfirmationCode(code: string): Promise<User | null> {
+  async getUserByConfirmationCode(code: string): Promise<UserDbEntity | null> {
     return this.usersRepository.findUserByConfirmationCode(code);
   }
 
@@ -55,7 +55,7 @@ export class UsersService {
 
   async addUser(fields: CreateUserFields) {
     const passwordHash = await generateHash(fields.password);
-    const newUser = new User(
+    const newUser = new UserDbEntity(
       new ObjectId(),
       generateCustomId(),
       fields.login,
@@ -71,7 +71,7 @@ export class UsersService {
 
   async makeRegisteredUser(fields: CreateUserFields) {
     const passwordHash = await generateHash(fields.password);
-    const newUser = new User(
+    const newUser = new UserDbEntity(
       new ObjectId(),
       generateCustomId(),
       fields.login,
@@ -92,7 +92,7 @@ export class UsersService {
     return isDeleted;
   }
 
-  async updateConfirmationCode(user: User) {
+  async updateConfirmationCode(user: UserDbEntity) {
     const newCode = generateConfirmCode();
     const isUpdated = await this.usersRepository.updateConfirmationCode(
       user.id,

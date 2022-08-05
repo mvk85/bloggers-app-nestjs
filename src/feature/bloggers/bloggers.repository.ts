@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { removeObjectIdOption } from 'src/const';
 import { MongooseModelNamed } from 'src/db/const';
 import { BloggersModel } from 'src/db/models.mongoose';
-import { Blogger } from 'src/db/types';
+import { BloggerDbEntity } from 'src/db/types';
 import { FilterBloggers } from './types';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class BloggersRepository {
     filter: FilterBloggers,
     skip: number,
     limit: number,
-  ): Promise<Blogger[]> {
+  ): Promise<BloggerDbEntity[]> {
     const bloggers = await this.bloggersModel
       .find(filter, removeObjectIdOption)
       .skip(skip)
@@ -32,7 +32,7 @@ export class BloggersRepository {
     return count;
   }
 
-  async getBloggerById(id: string): Promise<Blogger | null> {
+  async getBloggerById(id: string): Promise<BloggerDbEntity | null> {
     const query = this.bloggersModel.findOne({ id }, removeObjectIdOption);
 
     const blogger = await query;
@@ -40,7 +40,7 @@ export class BloggersRepository {
     return blogger;
   }
 
-  async getBloggerByIdOrThrow(id: string): Promise<Blogger | null> {
+  async getBloggerByIdOrThrow(id: string): Promise<BloggerDbEntity | null> {
     const blogger = await this.getBloggerById(id);
 
     if (!blogger) {
@@ -50,7 +50,9 @@ export class BloggersRepository {
     return blogger;
   }
 
-  async createBlogger(newBlogger: Blogger): Promise<Blogger | null> {
+  async createBlogger(
+    newBlogger: BloggerDbEntity,
+  ): Promise<BloggerDbEntity | null> {
     await this.bloggersModel.create(newBlogger);
 
     const blogger = await this.bloggersModel.findOne(

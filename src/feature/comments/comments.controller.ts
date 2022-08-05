@@ -13,12 +13,18 @@ import {
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CommentsService } from './comments.service';
 import { CommentCredentialsGuard } from './guards/comment-credentials.guard';
-import { CommentParamsValidatorModel } from './validators/comment-params.validator';
-import { CommentValidatorModel } from './validators/comment.validator';
+import { CommentParamsValidatorModel } from './dto/comment-params.validator';
+import { CommentValidatorModel } from './dto/comment.validator';
+import { CurrentUserIdFromJwt } from 'src/decorators/current-user-id.decorator';
+import { CommentLikeDto } from './dto/comment-like.dto';
+import { CommentLikesService } from './comment-like.service';
 
 @Controller('comments')
 export class CommentsController {
-  constructor(protected commentsService: CommentsService) {}
+  constructor(
+    protected commentsService: CommentsService,
+    private commentLikesService: CommentLikesService,
+  ) {}
 
   @Get(':id')
   async getById(@Param('id') id: string) {
@@ -59,6 +65,22 @@ export class CommentsController {
       throw new BadRequestException();
     }
 
+    return;
+  }
+
+  @Put(':id/like-status')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard)
+  async setLike(
+    @Body() likeDto: CommentLikeDto,
+    @Param() commentIdParam: CommentParamsValidatorModel,
+    @CurrentUserIdFromJwt() userId: string,
+  ) {
+    await this.commentLikesService.setLike(
+      likeDto.likeStatus,
+      userId,
+      commentIdParam.id,
+    );
     return;
   }
 }

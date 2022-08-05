@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { commentsProjection } from 'src/const';
+import { commentsProjection, removeObjectIdOption } from 'src/const';
 import { MongooseModelNamed } from 'src/db/const';
 import { CommentsModel } from 'src/db/models.mongoose';
 import { FilterComments } from './types';
-import { Comment } from 'src/db/types';
+import { CommentDbEntity, LikeCommentDbType, LikesStatus } from 'src/db/types';
 
 @Injectable()
 export class CommentsRepository {
@@ -28,7 +28,7 @@ export class CommentsRepository {
     return comments;
   }
 
-  async createComment(newComment: Comment) {
+  async createComment(newComment: CommentDbEntity) {
     await this.commentsModel.create(newComment);
 
     const createdComment = await this.commentsModel.findOne(
@@ -39,7 +39,7 @@ export class CommentsRepository {
     return createdComment;
   }
 
-  async getCommentById(id: string): Promise<Comment | null> {
+  async getCommentById(id: string): Promise<CommentDbEntity | null> {
     const comment = await this.commentsModel.findOne(
       { id },
       commentsProjection,
@@ -48,7 +48,7 @@ export class CommentsRepository {
     return comment;
   }
 
-  async getCommentByIdOrThrow(id: string): Promise<Comment | null> {
+  async getCommentByIdOrThrow(id: string): Promise<CommentDbEntity | null> {
     const comment = await this.getCommentById(id);
 
     if (!comment) {
@@ -75,5 +75,65 @@ export class CommentsRepository {
 
   async deleteAllComments() {
     await this.commentsModel.deleteMany({});
+  }
+
+  async addOrUpdateLike(
+    likeStatus: LikesStatus,
+    commentId: string,
+    likeItem: LikeCommentDbType,
+  ) {
+    const likeExist = await this.commentsModel.findOne({
+      id: commentId,
+      'likes.data': { $elemMatch: { userId: likeItem.userId } },
+    });
+
+    const filter = { id: commentId };
+    let update = {};
+    let options = {};
+
+    if (!likeExist) {
+      update = {
+        $set: {
+          'likes.status': likeStatus,
+        },
+        $push: {
+          'likes.data': likeItem,
+        },
+      };
+    } else {
+      update = {
+        $set: {
+          'likes.status': likeStatus,
+          'likes.data.$[element].likeStatus': likeItem.likeStatus,
+        },
+      };
+
+      options = {
+        arrayFilters: [{ 'element.userId': likeItem.userId }],
+      };
+    }
+
+    await this.commentsModel.findOneAndUpdate(filter, update, {
+      ...options,
+      ...removeObjectIdOption,
+    });
+
+    return true;
+  }
+
+  async removeLike(likeStatus: LikesStatus, commentId: string, userId: string) {
+    await this.commentsModel.findOneAndUpdate(
+      { id: commentId },
+      {
+        $set: {
+          'likes.status': likeStatus,
+        },
+        $pull: {
+          'likes.data': { userId: userId },
+        },
+      },
+    );
+
+    return true;
   }
 }

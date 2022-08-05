@@ -1,5 +1,5 @@
-import { Post } from 'src/db/types';
 import { PaginationData } from 'src/types';
+import { PostResponseEntity } from '../posts/types';
 
 export type FilterBloggers = {
   name?: { $regex: string };
@@ -10,5 +10,5 @@ export type FilterBloggersParams = {
 };
 
 export type ResponsePostsByBloggerId = PaginationData & {
-  items: Post[];
+  items: PostResponseEntity[];
 };

@@ -18,8 +18,8 @@ import { IpCheckerGuard } from './guards/ip-checker.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
-import { UserSignInValidatorModel } from './validators/user-login.validator';
-import { UserValidatorModel } from './validators/user.validator';
+import { UserSignInValidatorModel } from './dto/user-login.validator';
+import { UserValidatorModel } from './dto/user.validator';
 
 @Controller('auth')
 export class AuthController {

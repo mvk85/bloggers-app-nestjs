@@ -1,30 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { ObjectId } from 'mongodb';
 import { PaginationParams } from 'src/types';
-import { BloggersRepository } from '../bloggers/bloggers.repository';
-import { CommentsRepository } from '../comments/comments.repository';
-import {
-  generateCustomId,
-  generatePaginationData,
-  newIsoDate,
-} from 'src/utils';
+import { generatePaginationData } from 'src/utils';
 import { PostsRepository } from './posts.repository';
 import {
   PostCreateFields,
-  ResponseCommentsByPostId,
-  ResponsePosts,
+  PostsResponseType,
+  PostResponseEntity,
 } from './types';
-import { Post, Comment } from 'src/db/types';
+import { PostsLikesMapper } from './likes-post.mapper';
 
 @Injectable()
 export class PostsService {
   constructor(
-    protected bloggersRepository: BloggersRepository,
-    protected commentsRepository: CommentsRepository,
-    protected postsRepository: PostsRepository,
+    private postsRepository: PostsRepository,
+    private postsLikesMapper: PostsLikesMapper,
   ) {}
 
-  async getPosts(paginationParams: PaginationParams): Promise<ResponsePosts> {
+  async getPosts(
+    paginationParams: PaginationParams,
+  ): Promise<PostsResponseType> {
     const postsCount = await this.postsRepository.getCountPosts();
     const paginationData = generatePaginationData(paginationParams, postsCount);
 
@@ -35,7 +29,7 @@ export class PostsService {
     );
 
     return {
-      items: posts,
+      items: this.postsLikesMapper.normalizePostsLikes(posts),
       pagesCount: paginationData.pagesCount,
       pageSize: paginationData.pageSize,
       totalCount: postsCount,
@@ -43,32 +37,10 @@ export class PostsService {
     };
   }
 
-  async getPostById(id: string): Promise<Post | null> {
+  async getPostById(id: string): Promise<PostResponseEntity | null> {
     const post = await this.postsRepository.getPostById(id);
 
-    return post;
-  }
-
-  async createPost(fields: PostCreateFields): Promise<Post | null> {
-    const blogger = await this.bloggersRepository.getBloggerById(
-      fields.bloggerId,
-    );
-
-    if (!blogger) return null;
-
-    const newPosts: Post = new Post(
-      new ObjectId(),
-      generateCustomId(),
-      fields.title,
-      fields.shortDescription,
-      fields.content,
-      blogger.id,
-      blogger.name,
-    );
-
-    const createdPost = await this.postsRepository.createPost(newPosts);
-
-    return createdPost;
+    return post ? this.postsLikesMapper.normalizePostLikes(post) : null;
   }
 
   async deletePostById(id: string) {
@@ -81,61 +53,5 @@ export class PostsService {
     const isUpdated = await this.postsRepository.updatePostById(id, fields);
 
     return isUpdated;
-  }
-
-  async createComment({
-    content,
-    userId,
-    userLogin,
-    postId,
-  }: {
-    content: string;
-    userId: string;
-    userLogin: string;
-    postId: string;
-  }) {
-    const newComment: Comment = new Comment(
-      new ObjectId(),
-      generateCustomId(),
-      content,
-      userId,
-      userLogin,
-      newIsoDate(),
-      postId,
-    );
-
-    const createdComment = await this.commentsRepository.createComment(
-      newComment,
-    );
-
-    return createdComment;
-  }
-
-  async getCommentsByPostId(
-    postId: string,
-    paginationParams: PaginationParams,
-  ): Promise<ResponseCommentsByPostId> {
-    const commentsCount = await this.commentsRepository.getCountComments({
-      postId,
-    });
-    const paginationData = generatePaginationData(
-      paginationParams,
-      commentsCount,
-    );
-    const filter = { postId };
-
-    const comments = await this.commentsRepository.getComments(
-      filter,
-      paginationData.skip,
-      paginationData.pageSize,
-    );
-
-    return {
-      items: comments,
-      pagesCount: paginationData.pagesCount,
-      pageSize: paginationData.pageSize,
-      totalCount: commentsCount,
-      page: paginationData.pageNumber,
-    };
   }
 }

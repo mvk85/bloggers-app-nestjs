@@ -14,17 +14,19 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
+import { PostCreateService } from '../posts/post-create.service';
 import { PostsService } from '../posts/posts.service';
 import { BloggersService } from './bloggers.service';
-import { BloggerParamsValidatorModel } from './validators/blogger-params.validator';
-import { BloggerValidatorModel } from './validators/blogger.validator';
-import { PostValidatorModel } from './validators/post.validator';
+import { BloggerParamsValidatorModel } from './dto/blogger-params.validator';
+import { BloggerValidatorModel } from './dto/blogger.validator';
+import { PostValidatorModel } from './dto/post.validator';
 
 @Controller('bloggers')
 export class BloggersController {
   constructor(
     protected bloggersService: BloggersService,
     protected postsService: PostsService,
+    private postCreateService: PostCreateService,
   ) {}
 
   @Get()
@@ -134,7 +136,7 @@ export class BloggersController {
       bloggerId: params.id,
     };
 
-    const newPost = await this.postsService.createPost(bodyFields);
+    const newPost = await this.postCreateService.createPost(bodyFields);
 
     if (!newPost) {
       throw new BadRequestException();

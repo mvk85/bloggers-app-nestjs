@@ -1,4 +1,4 @@
-import { Blogger } from './db/types';
+import { BloggerDbEntity } from './db/types';
 
 export type PaginationParams = {
   PageNumber?: string;
@@ -13,5 +13,5 @@ export type PaginationData = {
 };
 
 export type ResponseBloggers = PaginationData & {
-  items: Blogger[];
+  items: BloggerDbEntity[];
 };

@@ -1,20 +1,20 @@
 import mongoose from 'mongoose';
 import {
-  Blogger,
+  BloggerDbEntity,
   BruteForceItem,
-  Comment,
-  Post,
+  CommentDbEntity,
+  PostDbEntity,
   BadRefreshTokenEntityType,
-  User,
+  UserDbEntity,
 } from './types';
 
-export const bloggersSchema = new mongoose.Schema<Blogger>({
+export const bloggersSchema = new mongoose.Schema<BloggerDbEntity>({
   id: { type: String, required: true },
   name: { type: String, required: true },
   youtubeUrl: { type: String, required: true },
 });
 
-export const usersSchema = new mongoose.Schema<User>({
+export const usersSchema = new mongoose.Schema<UserDbEntity>({
   passwordHash: { type: String, required: true },
   isConfirmed: { type: Boolean, required: true },
   confirmCode: { type: String, default: null },
@@ -23,22 +23,62 @@ export const usersSchema = new mongoose.Schema<User>({
   email: { type: String, required: true },
 });
 
-export const postsSchema = new mongoose.Schema<Post>({
+export const postsSchema = new mongoose.Schema<PostDbEntity>({
   id: { type: String, required: true },
   title: { type: String, required: true },
   shortDescription: { type: String, required: true },
   content: { type: String, required: true },
   bloggerId: { type: String, required: true },
   bloggerName: { type: String, required: true },
+  // TODO maybe use sub-schema will be better for likes?
+  likes: {
+    status: {
+      type: String,
+      enum: ['None', 'Like', 'Dislike'],
+      default: 'None',
+      required: true,
+    },
+    data: [
+      {
+        addedAt: { type: Date, required: true },
+        userId: { type: String, required: true },
+        login: { type: String, required: true },
+        likeStatus: {
+          type: String,
+          enum: ['Like', 'Dislike'],
+          required: true,
+        },
+      },
+    ],
+  },
 });
 
-export const commentsSchema = new mongoose.Schema<Comment>({
+export const commentsSchema = new mongoose.Schema<CommentDbEntity>({
   id: { type: String, required: true },
   content: { type: String, required: true },
   userId: { type: String, required: true },
   userLogin: { type: String, required: true },
   addedAt: { type: String, required: true },
   postId: { type: String, required: true },
+  likes: {
+    status: {
+      type: String,
+      enum: ['None', 'Like', 'Dislike'],
+      default: 'None',
+      required: true,
+    },
+    data: [
+      {
+        addedAt: { type: Date, required: true },
+        userId: { type: String, required: true },
+        likeStatus: {
+          type: String,
+          enum: ['Like', 'Dislike'],
+          required: true,
+        },
+      },
+    ],
+  },
 });
 
 export const requestsSchema = new mongoose.Schema<BruteForceItem>({

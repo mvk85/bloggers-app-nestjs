@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { User } from 'src/db/types';
+import { UserDbEntity } from 'src/db/types';
 import { EmailAtapter } from './email-adapter';
 
 @Injectable()
 export class EmailManager {
   constructor(protected emailAtapter: EmailAtapter) {}
 
-  async sendRegistrationCode(user: User): Promise<boolean> {
+  async sendRegistrationCode(user: UserDbEntity): Promise<boolean> {
     try {
       const subject = 'You need to confirm your email';
       const message = `

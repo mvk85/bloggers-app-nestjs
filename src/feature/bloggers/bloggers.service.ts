@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
-import { Blogger } from 'src/db/types';
+import { BloggerDbEntity } from 'src/db/types';
 import { PaginationParams, ResponseBloggers } from 'src/types';
 import { generateCustomId, generatePaginationData } from 'src/utils';
+import { PostsLikesMapper } from '../posts/likes-post.mapper';
 import { PostsRepository } from '../posts/posts.repository';
 import { BloggersRepository } from './bloggers.repository';
 import { FilterBloggersParams, ResponsePostsByBloggerId } from './types';
@@ -12,6 +13,7 @@ export class BloggersService {
   constructor(
     protected bloggersRepository: BloggersRepository,
     protected postsRepository: PostsRepository,
+    private postsLikesMapper: PostsLikesMapper,
   ) {}
 
   async getBloggers(
@@ -60,7 +62,7 @@ export class BloggersService {
     );
 
     return {
-      items: posts,
+      items: this.postsLikesMapper.normalizePostsLikes(posts),
       pagesCount: paginationData.pagesCount,
       pageSize: paginationData.pageSize,
       totalCount: postsCount,
@@ -68,14 +70,14 @@ export class BloggersService {
     };
   }
 
-  async getBloggerById(id: string): Promise<Blogger | null> {
+  async getBloggerById(id: string): Promise<BloggerDbEntity | null> {
     const blogger = await this.bloggersRepository.getBloggerById(id);
 
     return blogger;
   }
 
   async createBlogger(name: string, youtubeUrl: string) {
-    const newBloggers: Blogger = new Blogger(
+    const newBloggers: BloggerDbEntity = new BloggerDbEntity(
       new ObjectId(),
       generateCustomId(),
       name,

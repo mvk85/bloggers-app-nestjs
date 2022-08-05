@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
 import { UsersService } from './users.service';
-import { UserValidatorModel } from './validators/user.validator';
+import { UserValidatorModel } from './dto/user.validator';
 
 @Controller('users')
 export class UsersController {
