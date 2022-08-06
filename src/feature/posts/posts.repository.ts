@@ -78,11 +78,8 @@ export class PostsRepository {
     await this.postsModel.deleteMany({});
   }
 
-  async addOrUpdateLike(
-    likeStatus: LikesStatus,
-    postId: string,
-    likeItem: LikePostDbType,
-  ) {
+  async addOrUpdateLike(postId: string, likeItem: LikePostDbType) {
+    // TODO попробовать переделать на запись за одно обращение к бд
     const likeExist = await this.postsModel.findOne({
       id: postId,
       'likes.data': { $elemMatch: { userId: likeItem.userId } },
@@ -94,9 +91,6 @@ export class PostsRepository {
 
     if (!likeExist) {
       update = {
-        $set: {
-          'likes.status': likeStatus,
-        },
         $push: {
           'likes.data': likeItem,
         },
@@ -104,7 +98,6 @@ export class PostsRepository {
     } else {
       update = {
         $set: {
-          'likes.status': likeStatus,
           'likes.data.$[element].likeStatus': likeItem.likeStatus,
         },
       };
@@ -122,13 +115,10 @@ export class PostsRepository {
     return true;
   }
 
-  async removeLike(likeStatus: LikesStatus, postId: string, userId: string) {
+  async removeLike(postId: string, userId: string) {
     await this.postsModel.findOneAndUpdate(
       { id: postId },
       {
-        $set: {
-          'likes.status': likeStatus,
-        },
         $pull: {
           'likes.data': { userId: userId },
         },

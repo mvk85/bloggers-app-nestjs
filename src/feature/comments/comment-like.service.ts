@@ -9,18 +9,14 @@ export class CommentLikesService {
 
   async setLike(likeStatus: LikesStatus, userId: string, commentId: string) {
     if (likeStatus === LikesStatus.None) {
-      await this.commentsRepository.removeLike(likeStatus, commentId, userId);
+      await this.commentsRepository.removeLike(commentId, userId);
 
       return true;
     }
 
     const likeItem = await this.makeLikeItem(likeStatus, userId);
 
-    await this.commentsRepository.addOrUpdateLike(
-      likeStatus,
-      commentId,
-      likeItem,
-    );
+    await this.commentsRepository.addOrUpdateLike(commentId, likeItem);
 
     return;
   }

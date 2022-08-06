@@ -13,14 +13,14 @@ export class PostLikesService {
 
   async setLike(likeStatus: LikesStatus, userId: string, postId: string) {
     if (likeStatus === LikesStatus.None) {
-      await this.postsRepository.removeLike(likeStatus, postId, userId);
+      await this.postsRepository.removeLike(postId, userId);
 
       return true;
     }
 
     const likeItem = await this.makeLikeItem(likeStatus, userId);
 
-    await this.postsRepository.addOrUpdateLike(likeStatus, postId, likeItem);
+    await this.postsRepository.addOrUpdateLike(postId, likeItem);
 
     return;
   }

@@ -7,14 +7,26 @@ import {
 } from 'src/db/types';
 import { PostsLikesMapper } from './likes-post.mapper';
 
-const generateNewLike = (likeStatus: LikeItemType, addedAt = new Date()) => {
-  return {
+const generateLike = ({
+  addedAt = new Date(),
+  userId = '1',
+  login = 'max',
+  likeStatus = LikeItemType.Like,
+}): LikePostDbType => ({
+  addedAt,
+  userId,
+  login,
+  likeStatus,
+  _id: new ObjectId(),
+});
+
+const generateNewLike = (likeStatus: LikeItemType, addedAt?: Date) => {
+  return generateLike({
     addedAt,
     userId: '1',
     login: 'max',
     likeStatus,
-    _id: new ObjectId(),
-  };
+  });
 };
 
 describe('likes mapper', () => {
@@ -68,33 +80,71 @@ describe('likes mapper', () => {
     const like5: LikePostDbType = generateNewLike(LikeItemType.Like, like5Date);
 
     const rawData = [like1, like2, like3, like4, like5];
-    const expectData = [like2, like5, like4];
+    const expectData = [like1, like4, like5];
 
     expect(likesMapper.getNewestLike(rawData)).toEqual(expectData);
+  });
+
+  it('Should find myStatus', () => {
+    const userId1 = '1';
+    const userId2 = '2';
+    const userId3 = '3';
+    const like1 = generateLike({ userId: userId1 });
+    const like2 = generateLike({ userId: userId2 });
+    const like3 = generateLike({ userId: userId3 });
+    const data = [like1, like2, like3];
+
+    expect(likesMapper.findMyStatus(data, userId2)).toEqual(like2.likeStatus);
+  });
+
+  it('Should not find myStatus', () => {
+    const userId1 = '1';
+    const userId2 = '2';
+    const userId3 = '3';
+    const like1 = generateLike({ userId: userId1 });
+    const like2 = generateLike({ userId: userId2 });
+    const like3 = generateLike({ userId: userId3 });
+    const data = [like1, like2, like3];
+
+    expect(likesMapper.findMyStatus(data, '5')).toEqual(LikesStatus.None);
   });
 
   it('Should normalize post by likes', () => {
     const like1Date = new Date('2021-12-17T03:34:00');
     const like2Date = new Date('2021-12-17T03:04:00');
+    const like3Date = new Date('2021-12-17T03:54:00');
     const like4Date = new Date('2021-12-17T03:24:00');
     const like5Date = new Date('2021-12-17T03:14:00');
-    const like1Db: LikePostDbType = generateNewLike(
-      LikeItemType.Like,
-      like1Date,
-    );
-    const like2Db: LikePostDbType = generateNewLike(
-      LikeItemType.Like,
-      like2Date,
-    );
-    const like3Db: LikePostDbType = generateNewLike(LikeItemType.Dislike);
-    const like4Db: LikePostDbType = generateNewLike(
-      LikeItemType.Like,
-      like4Date,
-    );
-    const like5Db: LikePostDbType = generateNewLike(
-      LikeItemType.Like,
-      like5Date,
-    );
+    const userId1 = '1';
+    const userId2 = '2';
+    const userId3 = '3';
+    const userId4 = '4';
+    const userId5 = '5';
+    const like1Db: LikePostDbType = generateLike({
+      likeStatus: LikeItemType.Like,
+      addedAt: like1Date,
+      userId: userId1,
+    });
+    const like2Db: LikePostDbType = generateLike({
+      likeStatus: LikeItemType.Like,
+      addedAt: like2Date,
+      userId: userId2,
+    });
+    const like3Db: LikePostDbType = generateLike({
+      likeStatus: LikeItemType.Dislike,
+      addedAt: like3Date,
+      userId: userId3,
+    });
+    const like4Db: LikePostDbType = generateLike({
+      likeStatus: LikeItemType.Like,
+      addedAt: like4Date,
+      userId: userId4,
+    });
+    const like5Db: LikePostDbType = generateLike({
+      likeStatus: LikeItemType.Like,
+      addedAt: like5Date,
+      userId: userId5,
+    });
     const likesDb = {
       status: LikesStatus.Like,
       data: [like1Db, like2Db, like3Db, like4Db, like5Db],
@@ -133,23 +183,25 @@ describe('likes mapper', () => {
         myStatus: LikesStatus.Like,
         newestLikes: [
           {
-            addedAt: like2Date,
+            addedAt: like1Date,
             login: 'max',
-            userId: '1',
-          },
-          {
-            addedAt: like5Date,
-            login: 'max',
-            userId: '1',
+            userId: userId1,
           },
           {
             addedAt: like4Date,
             login: 'max',
-            userId: '1',
+            userId: userId4,
+          },
+          {
+            addedAt: like5Date,
+            login: 'max',
+            userId: userId5,
           },
         ],
       },
     };
-    expect(likesMapper.normalizePostLikes(post)).toEqual(normalizePosts);
+    expect(likesMapper.normalizePostLikes(post, userId1)).toEqual(
+      normalizePosts,
+    );
   });
 });

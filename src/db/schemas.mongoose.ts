@@ -33,12 +33,6 @@ export const postsSchema = new mongoose.Schema<PostDbEntity>({
   addedAt: { type: Date, requered: true },
   // TODO maybe use sub-schema will be better for likes?
   likes: {
-    status: {
-      type: String,
-      enum: ['None', 'Like', 'Dislike'],
-      default: 'None',
-      required: true,
-    },
     data: [
       {
         addedAt: { type: Date, required: true },
@@ -62,12 +56,6 @@ export const commentsSchema = new mongoose.Schema<CommentDbEntity>({
   addedAt: { type: String, required: true },
   postId: { type: String, required: true },
   likes: {
-    status: {
-      type: String,
-      enum: ['None', 'Like', 'Dislike'],
-      default: 'None',
-      required: true,
-    },
     data: [
       {
         addedAt: { type: Date, required: true },

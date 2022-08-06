@@ -3,7 +3,7 @@ import { commentsProjection, removeObjectIdOption } from 'src/const';
 import { MongooseModelNamed } from 'src/db/const';
 import { CommentsModel } from 'src/db/models.mongoose';
 import { FilterComments } from './types';
-import { CommentDbEntity, LikeCommentDbType, LikesStatus } from 'src/db/types';
+import { CommentDbEntity, LikeCommentDbType } from 'src/db/types';
 
 @Injectable()
 export class CommentsRepository {
@@ -77,11 +77,8 @@ export class CommentsRepository {
     await this.commentsModel.deleteMany({});
   }
 
-  async addOrUpdateLike(
-    likeStatus: LikesStatus,
-    commentId: string,
-    likeItem: LikeCommentDbType,
-  ) {
+  async addOrUpdateLike(commentId: string, likeItem: LikeCommentDbType) {
+    // TODO правильно ли для комментариев делать отдельно? (здесь можно хранить меньше инфы и возможны в будущем отличия)
     const likeExist = await this.commentsModel.findOne({
       id: commentId,
       'likes.data': { $elemMatch: { userId: likeItem.userId } },
@@ -93,9 +90,6 @@ export class CommentsRepository {
 
     if (!likeExist) {
       update = {
-        $set: {
-          'likes.status': likeStatus,
-        },
         $push: {
           'likes.data': likeItem,
         },
@@ -103,7 +97,6 @@ export class CommentsRepository {
     } else {
       update = {
         $set: {
-          'likes.status': likeStatus,
           'likes.data.$[element].likeStatus': likeItem.likeStatus,
         },
       };
@@ -121,13 +114,10 @@ export class CommentsRepository {
     return true;
   }
 
-  async removeLike(likeStatus: LikesStatus, commentId: string, userId: string) {
+  async removeLike(commentId: string, userId: string) {
     await this.commentsModel.findOneAndUpdate(
       { id: commentId },
       {
-        $set: {
-          'likes.status': likeStatus,
-        },
         $pull: {
           'likes.data': { userId: userId },
         },

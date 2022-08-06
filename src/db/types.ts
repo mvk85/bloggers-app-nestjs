@@ -27,12 +27,10 @@ export type LikeCommentDbType = WithId<{
 }>;
 
 export type LikesPostDbType = {
-  status: LikesStatus;
   data: LikePostDbType[];
 };
 
 export type LikesCommentDbType = {
-  status: LikesStatus;
   data: LikeCommentDbType[];
 };
 

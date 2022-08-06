@@ -23,6 +23,7 @@ export type ExtendedLikesInfoType = {
   newestLikes: NewestLikesType;
 };
 
+// TODO как можно переименовать возвращаемые dto
 export class PostResponseEntity {
   constructor(
     public id: IdType,
