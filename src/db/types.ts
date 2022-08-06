@@ -2,6 +2,11 @@ import { ObjectId, WithId } from 'mongodb';
 
 export type IdType = string;
 
+export interface ILikeDbData {
+  userId: string;
+  likeStatus: LikeItemType;
+}
+
 export enum LikesStatus {
   None = 'None',
   Like = 'Like',
@@ -13,18 +18,16 @@ export enum LikeItemType {
   Dislike = 'Dislike',
 }
 
-export type LikePostDbType = WithId<{
-  addedAt: Date;
-  userId: string;
-  login: string;
-  likeStatus: LikeItemType;
-}>;
+export type LikePostDbType = ILikeDbData &
+  WithId<{
+    addedAt: Date;
+    login: string;
+  }>;
 
-export type LikeCommentDbType = WithId<{
-  addedAt: Date;
-  userId: string;
-  likeStatus: LikeItemType;
-}>;
+export type LikeCommentDbType = ILikeDbData &
+  WithId<{
+    addedAt: Date;
+  }>;
 
 export type LikesPostDbType = {
   data: LikePostDbType[];

@@ -19,6 +19,7 @@ import { CommentsByPostService } from './posts/comments-by-post.service';
 import { PostExistsByIdRule } from './posts/decorators/post-exist.rule';
 import { CommentsLikesMapper } from './posts/likes-comment.mapper';
 import { PostsLikesMapper } from './posts/likes-post.mapper';
+import { LikeMapper } from './posts/likes.mapper';
 import { PostCreateService } from './posts/post-create.service';
 import { PostLikesService } from './posts/post-like.service';
 import { PostsController } from './posts/posts.controller';
@@ -60,6 +61,7 @@ import { UsersService } from './users/users.service';
     PostsLikesMapper,
     CommentsLikesMapper,
     CommentLikesService,
+    LikeMapper,
   ],
   exports: [
     UsersService, // TODO избавиться от экспорта сервиса

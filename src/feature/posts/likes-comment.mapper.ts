@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { CommentDbEntity, LikeCommentDbType, LikeItemType } from 'src/db/types';
+import { CommentDbEntity, LikeItemType } from 'src/db/types';
+import { LikeMapper } from './likes.mapper';
 import { CommentResponseType } from './types';
 
 @Injectable()
 export class CommentsLikesMapper {
+  constructor(private likeMapper: LikeMapper) {}
+
   public normalizeCommentsLikes(
     comments: CommentDbEntity[],
   ): CommentResponseType[] {
@@ -18,25 +21,16 @@ export class CommentsLikesMapper {
       userId: comment.userId,
       userLogin: comment.userLogin,
       likesInfo: {
-        likesCount: this.countByLikeType(comment.likes.data, LikeItemType.Like),
-        dislikesCount: this.countByLikeType(
+        likesCount: this.likeMapper.countByLikeType(
+          comment.likes.data,
+          LikeItemType.Like,
+        ),
+        dislikesCount: this.likeMapper.countByLikeType(
           comment.likes.data,
           LikeItemType.Dislike,
         ),
-        myStatus: comment.likes.status,
+        myStatus: this.likeMapper.findMyStatus(comment.likes.data),
       },
     };
-  }
-
-  public countByLikeType(data: LikeCommentDbType[], likeType: LikeItemType) {
-    let count = 0;
-
-    data.forEach((like) => {
-      if (like.likeStatus === likeType) {
-        count++;
-      }
-    });
-
-    return count;
   }
 }

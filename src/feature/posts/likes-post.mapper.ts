@@ -5,10 +5,13 @@ import {
   LikesStatus,
   PostDbEntity,
 } from 'src/db/types';
+import { LikeMapper } from './likes.mapper';
 import { LikeItemResponseType, PostResponseEntity } from './types';
 
 @Injectable()
 export class PostsLikesMapper {
+  constructor(private likeMapper: LikeMapper) {}
+
   public normalizePostsLikes(posts: PostDbEntity[]): PostResponseEntity[] {
     return posts.map((post) => this.normalizePostLikes(post));
   }
@@ -23,13 +26,16 @@ export class PostsLikesMapper {
       bloggerName: post.bloggerName,
       addedAt: post.addedAt,
       extendedLikesInfo: {
-        likesCount: this.countByLikeType(post.likes.data, LikeItemType.Like),
-        dislikesCount: this.countByLikeType(
+        likesCount: this.likeMapper.countByLikeType(
+          post.likes.data,
+          LikeItemType.Like,
+        ),
+        dislikesCount: this.likeMapper.countByLikeType(
           post.likes.data,
           LikeItemType.Dislike,
         ),
         myStatus: userId
-          ? this.findMyStatus(post.likes.data, userId)
+          ? this.likeMapper.findMyStatus(post.likes.data, userId)
           : LikesStatus.None,
         newestLikes: this.getNewestLike(post.likes.data).map((like) =>
           this.formatLike(like),
@@ -38,37 +44,12 @@ export class PostsLikesMapper {
     };
   }
 
-  public findMyStatus(data: LikePostDbType[], userId: string): LikesStatus {
-    const currentLike = data.find((i) => i.userId === userId);
-
-    if (!currentLike) return LikesStatus.None;
-
-    const status =
-      currentLike.likeStatus === LikeItemType.Like
-        ? LikesStatus.Like
-        : LikesStatus.Dislike;
-
-    return status;
-  }
-
   public formatLike(like: LikePostDbType): LikeItemResponseType {
     return {
       addedAt: like.addedAt,
       userId: like.userId,
       login: like.login,
     };
-  }
-
-  public countByLikeType(data: LikePostDbType[], likeType: LikeItemType) {
-    let count = 0;
-
-    data.forEach((like) => {
-      if (like.likeStatus === likeType) {
-        count++;
-      }
-    });
-
-    return count;
   }
 
   public getNewestLike(data: LikePostDbType[], countItems = 3) {
