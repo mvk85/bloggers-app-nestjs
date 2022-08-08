@@ -26,6 +26,7 @@ import { PostLikesService } from './post-like.service';
 import { PostCreateService } from './post-create.service';
 import { CommentsByPostService } from './comments-by-post.service';
 import { ValidatePostId } from 'src/guards/validate-post-id.guard';
+import { InjectUserIdFromJwt } from 'src/guards/inject-user-id-from-jwt';
 
 @Controller('posts')
 export class PostsController {
@@ -39,14 +40,19 @@ export class PostsController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
+  @UseGuards(InjectUserIdFromJwt)
   async getPosts(
+    @CurrentUserIdFromJwt() userId: string,
     @Query('PageNumber') pageNumber?: string,
     @Query('PageSize') pageSize?: string,
   ) {
-    const response = await this.postsService.getPosts({
-      PageNumber: pageNumber,
-      PageSize: pageSize,
-    });
+    const response = await this.postsService.getPosts(
+      {
+        PageNumber: pageNumber,
+        PageSize: pageSize,
+      },
+      userId,
+    );
 
     return response;
   }
@@ -66,8 +72,12 @@ export class PostsController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  async getPostById(@Param('id') postId: string) {
-    const post = await this.postsService.getPostById(postId);
+  @UseGuards(InjectUserIdFromJwt)
+  async getPostById(
+    @Param('id') postId: string,
+    @CurrentUserIdFromJwt() userId: string,
+  ) {
+    const post = await this.postsService.getPostById(postId, userId);
 
     if (!post) {
       throw new NotFoundException();

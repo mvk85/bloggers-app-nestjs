@@ -18,6 +18,7 @@ export class PostsService {
 
   async getPosts(
     paginationParams: PaginationParams,
+    userId?: string,
   ): Promise<PostsResponseType> {
     const postsCount = await this.postsRepository.getCountPosts();
     const paginationData = generatePaginationData(paginationParams, postsCount);
@@ -29,7 +30,7 @@ export class PostsService {
     );
 
     return {
-      items: this.postsLikesMapper.normalizePostsLikes(posts),
+      items: this.postsLikesMapper.normalizePostsLikes(posts, userId),
       pagesCount: paginationData.pagesCount,
       pageSize: paginationData.pageSize,
       totalCount: postsCount,
@@ -37,10 +38,13 @@ export class PostsService {
     };
   }
 
-  async getPostById(id: string): Promise<PostResponseEntity | null> {
-    const post = await this.postsRepository.getPostById(id);
+  async getPostById(
+    postId: string,
+    userId?: string,
+  ): Promise<PostResponseEntity | null> {
+    const post = await this.postsRepository.getPostById(postId);
 
-    return post ? this.postsLikesMapper.normalizePostLikes(post) : null;
+    return post ? this.postsLikesMapper.normalizePostLikes(post, userId) : null;
   }
 
   async deletePostById(id: string) {

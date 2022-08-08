@@ -12,8 +12,11 @@ import { LikeItemResponseType, PostResponseEntity } from './types';
 export class PostsLikesMapper {
   constructor(private likeMapper: LikeMapper) {}
 
-  public normalizePostsLikes(posts: PostDbEntity[]): PostResponseEntity[] {
-    return posts.map((post) => this.normalizePostLikes(post));
+  public normalizePostsLikes(
+    posts: PostDbEntity[],
+    userId?: string,
+  ): PostResponseEntity[] {
+    return posts.map((post) => this.normalizePostLikes(post, userId));
   }
 
   public normalizePostLikes(post: PostDbEntity, userId?: string) {
