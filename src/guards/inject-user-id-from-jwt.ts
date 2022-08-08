@@ -19,7 +19,7 @@ export class InjectUserIdFromJwt implements CanActivate {
     const req: Request = context.switchToHttp().getRequest();
 
     if (!req.headers.authorization) {
-      throw new UnauthorizedException();
+      return true;
     }
 
     const token = req.headers.authorization.split(' ')[1];
