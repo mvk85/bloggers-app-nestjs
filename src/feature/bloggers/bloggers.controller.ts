@@ -14,6 +14,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
+import { GetUserIdFromJwt } from 'src/decorators/get-user-id.decorator';
+import { InjectUserIdFromJwt } from 'src/guards/inject-user-id-from-jwt';
 import { PostCreateService } from '../posts/post-create.service';
 import { PostsService } from '../posts/posts.service';
 import { BloggersService } from './bloggers.service';
@@ -108,15 +110,21 @@ export class BloggersController {
 
   @Get(':id/posts')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(InjectUserIdFromJwt)
   async getPostsByBloggerId(
     @Param() params: BloggerParamsValidatorModel,
+    @GetUserIdFromJwt() userId: string,
     @Query('PageNumber') PageNumber?: string,
     @Query('PageSize') PageSize?: string,
   ) {
-    const response = await this.bloggersService.getPostsByBloggerId(params.id, {
-      PageNumber,
-      PageSize,
-    });
+    const response = await this.bloggersService.getPostsByBloggerId(
+      params.id,
+      {
+        PageNumber,
+        PageSize,
+      },
+      userId,
+    );
 
     return response;
   }

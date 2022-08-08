@@ -50,6 +50,7 @@ export class BloggersService {
   async getPostsByBloggerId(
     bloggerId: string,
     paginationParams: PaginationParams,
+    userId?: string,
   ): Promise<ResponsePostsByBloggerId> {
     const filter = { bloggerId };
     const postsCount = await this.postsRepository.getCountPosts(filter);
@@ -62,7 +63,7 @@ export class BloggersService {
     );
 
     return {
-      items: this.postsLikesMapper.normalizePostsLikes(posts),
+      items: this.postsLikesMapper.normalizePostsLikes(posts, userId),
       pagesCount: paginationData.pagesCount,
       pageSize: paginationData.pageSize,
       totalCount: postsCount,
