@@ -78,7 +78,7 @@ export class CommentsRepository {
   }
 
   async addOrUpdateLike(commentId: string, likeItem: LikeCommentDbType) {
-    // TODO правильно ли для комментариев делать отдельно? (здесь можно хранить меньше инфы и возможны в будущем отличия)
+    // TODO разделить на отдельные методы
     const likeExist = await this.commentsModel.findOne({
       id: commentId,
       'likes.data': { $elemMatch: { userId: likeItem.userId } },

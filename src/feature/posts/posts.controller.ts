@@ -25,6 +25,7 @@ import { PostLikeDto } from './dto/post-like.dto';
 import { PostLikesService } from './post-like.service';
 import { PostCreateService } from './post-create.service';
 import { CommentsByPostService } from './comments-by-post.service';
+import { ValidatePostId } from 'src/guards/validate-post-id.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -150,11 +151,11 @@ export class PostsController {
 
   @Put(':id/like-status')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ValidatePostId)
   async setLike(
-    @Body() likeDto: PostLikeDto,
-    @Param() postIdParam: PostIdParamValidatorModel,
+    @Param() postIdParam: PostIdParamValidatorModel, //TODO это срабатывает всегда после @Body() и всегда 400 вместо нужной 404 и сделан для фикс ValidatePostId
     @CurrentUserIdFromJwt() userId: string,
+    @Body() likeDto: PostLikeDto,
   ) {
     await this.postLikesService.setLike(
       likeDto.likeStatus,

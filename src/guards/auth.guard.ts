@@ -36,9 +36,6 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
 
-    // TODO сделать типизацию
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     req.user = {
       userId: user.id,
       userLogin: user.login,
