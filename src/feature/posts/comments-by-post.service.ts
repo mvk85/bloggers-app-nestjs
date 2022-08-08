@@ -51,6 +51,7 @@ export class CommentsByPostService {
   async getCommentsByPostId(
     postId: string,
     paginationParams: PaginationParams,
+    userId?: string,
   ): Promise<CommentsByPostIdResponseType> {
     const commentsCount = await this.commentsRepository.getCountComments({
       postId,
@@ -68,7 +69,7 @@ export class CommentsByPostService {
     );
 
     return {
-      items: this.commentsLikesMapper.normalizeCommentsLikes(comments),
+      items: this.commentsLikesMapper.normalizeCommentsLikes(comments, userId),
       pagesCount: paginationData.pagesCount,
       pageSize: paginationData.pageSize,
       totalCount: commentsCount,

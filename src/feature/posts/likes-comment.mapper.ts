@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CommentDbEntity, LikeItemType } from 'src/db/types';
+import { CommentDbEntity, LikeItemType, LikesStatus } from 'src/db/types';
 import { LikeMapper } from './likes.mapper';
 import { CommentResponseType } from './types';
 
@@ -9,11 +9,17 @@ export class CommentsLikesMapper {
 
   public normalizeCommentsLikes(
     comments: CommentDbEntity[],
+    userId?: string,
   ): CommentResponseType[] {
-    return comments.map((comment) => this.normalizeCommentLikes(comment));
+    return comments.map((comment) =>
+      this.normalizeCommentLikes(comment, userId),
+    );
   }
 
-  public normalizeCommentLikes(comment: CommentDbEntity): CommentResponseType {
+  public normalizeCommentLikes(
+    comment: CommentDbEntity,
+    userId?: string,
+  ): CommentResponseType {
     return {
       id: comment.id,
       content: comment.content,
@@ -29,7 +35,9 @@ export class CommentsLikesMapper {
           comment.likes.data,
           LikeItemType.Dislike,
         ),
-        myStatus: this.likeMapper.findMyStatus(comment.likes.data),
+        myStatus: userId
+          ? this.likeMapper.findMyStatus(comment.likes.data, userId)
+          : LikesStatus.None,
       },
     };
   }

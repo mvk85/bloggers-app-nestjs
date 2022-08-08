@@ -4,7 +4,7 @@ import { jwtModuleAsyncOptions } from 'src/auth/jwt-module-options';
 import { JwtUtility } from 'src/auth/jwt-utility';
 import { BasicStrategy } from 'src/auth/strategies/basic-auth.strategy';
 import { InjectUserIdFromJwt } from 'src/guards/inject-user-id-from-jwt';
-import { ValidatePostId } from 'src/guards/validate-post-id.guard';
+import { ValidatePostId } from 'src/feature/posts/guards/validate-post-id.guard';
 import { NotExistsUserByEmailRule } from 'src/validators/not-exist-user-email.validator';
 import { UserExistsByLoginRule } from 'src/validators/user-exist-login.validator';
 import { BloggersController } from './bloggers/bloggers.controller';
@@ -30,6 +30,7 @@ import { PostsService } from './posts/posts.service';
 import { UsersController } from './users/users.controller';
 import { UsersRepository } from './users/users.repository';
 import { UsersService } from './users/users.service';
+import { ValidateCommentId } from './comments/guards/validate-comment-id.guard';
 
 @Module({
   imports: [JwtModule.registerAsync(jwtModuleAsyncOptions)],
@@ -66,6 +67,7 @@ import { UsersService } from './users/users.service';
     LikeMapper,
     ValidatePostId,
     InjectUserIdFromJwt,
+    ValidateCommentId,
   ],
   exports: [
     UsersService, // TODO избавиться от экспорта сервиса

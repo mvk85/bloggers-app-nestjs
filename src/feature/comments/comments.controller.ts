@@ -18,6 +18,9 @@ import { CommentValidatorModel } from './dto/comment.validator';
 import { CurrentUserIdFromJwt } from 'src/decorators/current-user-id.decorator';
 import { CommentLikeDto } from './dto/comment-like.dto';
 import { CommentLikesService } from './comment-like.service';
+import { ValidateCommentId } from './guards/validate-comment-id.guard';
+import { InjectUserIdFromJwt } from 'src/guards/inject-user-id-from-jwt';
+import { GetUserIdFromJwt } from 'src/decorators/get-user-id.decorator';
 
 @Controller('comments')
 export class CommentsController {
@@ -27,8 +30,9 @@ export class CommentsController {
   ) {}
 
   @Get(':id')
-  async getById(@Param('id') id: string) {
-    const comment = await this.commentsService.getById(id);
+  @UseGuards(InjectUserIdFromJwt)
+  async getById(@Param('id') id: string, @GetUserIdFromJwt() userId: string) {
+    const comment = await this.commentsService.getById(id, userId);
 
     if (!comment) {
       throw new BadRequestException();
@@ -70,7 +74,7 @@ export class CommentsController {
 
   @Put(':id/like-status')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, ValidateCommentId)
   async setLike(
     @Body() likeDto: CommentLikeDto,
     @Param() commentIdParam: CommentParamsValidatorModel,

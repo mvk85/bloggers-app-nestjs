@@ -25,7 +25,7 @@ import { PostLikeDto } from './dto/post-like.dto';
 import { PostLikesService } from './post-like.service';
 import { PostCreateService } from './post-create.service';
 import { CommentsByPostService } from './comments-by-post.service';
-import { ValidatePostId } from 'src/guards/validate-post-id.guard';
+import { ValidatePostId } from 'src/feature/posts/guards/validate-post-id.guard';
 import { InjectUserIdFromJwt } from 'src/guards/inject-user-id-from-jwt';
 import { GetUserIdFromJwt } from 'src/decorators/get-user-id.decorator';
 
@@ -144,8 +144,10 @@ export class PostsController {
 
   @Get(':id/comments')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(InjectUserIdFromJwt)
   async getCommentsByPostId(
     @Param() postParams: PostIdParamValidatorModel,
+    @GetUserIdFromJwt() userId: string,
     @Query('PageNumber') pageNumber?: string,
     @Query('PageSize') pageSize?: string,
   ) {
@@ -155,6 +157,7 @@ export class PostsController {
         PageNumber: pageNumber,
         PageSize: pageSize,
       },
+      userId,
     );
 
     return response;

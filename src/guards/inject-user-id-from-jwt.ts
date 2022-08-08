@@ -3,6 +3,7 @@ import { Request } from 'express';
 import { JwtUtility } from 'src/auth/jwt-utility';
 import { UsersRepository } from 'src/feature/users/users.repository';
 
+// TODO узнать, нормально ли так делать (делается только подмешинвание, без прерывания)
 @Injectable()
 export class InjectUserIdFromJwt implements CanActivate {
   constructor(

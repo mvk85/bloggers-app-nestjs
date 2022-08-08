@@ -15,11 +15,11 @@ export class CommentsService {
     return isDeleted;
   }
 
-  async getById(id: string) {
+  async getById(id: string, userId?: string) {
     const comment = await this.commentsRepository.getCommentById(id);
 
     return comment
-      ? this.commentsLikesMapper.normalizeCommentLikes(comment)
+      ? this.commentsLikesMapper.normalizeCommentLikes(comment, userId)
       : null;
   }
 
