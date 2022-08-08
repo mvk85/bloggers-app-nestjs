@@ -17,10 +17,10 @@ import { TestingAppModule } from './testing/testing.module';
     AuthModule,
     FeatureModule,
     TestingAppModule,
-    TypeOrmModule.forRootAsync({
-      useFactory: connectPosgresFactory,
-      inject: [AppConfigService],
-    }),
+    // TypeOrmModule.forRootAsync({
+    //   useFactory: connectPosgresFactory,
+    //   inject: [AppConfigService],
+    // }),
   ],
 })
 export class AppModule {}
