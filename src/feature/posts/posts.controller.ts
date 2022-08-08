@@ -27,6 +27,7 @@ import { PostCreateService } from './post-create.service';
 import { CommentsByPostService } from './comments-by-post.service';
 import { ValidatePostId } from 'src/guards/validate-post-id.guard';
 import { InjectUserIdFromJwt } from 'src/guards/inject-user-id-from-jwt';
+import { GetUserIdFromJwt } from 'src/decorators/get-user-id.decorator';
 
 @Controller('posts')
 export class PostsController {
@@ -42,7 +43,7 @@ export class PostsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(InjectUserIdFromJwt)
   async getPosts(
-    @CurrentUserIdFromJwt() userId: string,
+    @GetUserIdFromJwt() userId: string,
     @Query('PageNumber') pageNumber?: string,
     @Query('PageSize') pageSize?: string,
   ) {
@@ -75,7 +76,7 @@ export class PostsController {
   @UseGuards(InjectUserIdFromJwt)
   async getPostById(
     @Param('id') postId: string,
-    @CurrentUserIdFromJwt() userId: string,
+    @GetUserIdFromJwt() userId: string,
   ) {
     const post = await this.postsService.getPostById(postId, userId);
 

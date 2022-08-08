@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtModuleAsyncOptions } from 'src/auth/jwt-module-options';
 import { JwtUtility } from 'src/auth/jwt-utility';
 import { BasicStrategy } from 'src/auth/strategies/basic-auth.strategy';
+import { InjectUserIdFromJwt } from 'src/guards/inject-user-id-from-jwt';
 import { ValidatePostId } from 'src/guards/validate-post-id.guard';
 import { NotExistsUserByEmailRule } from 'src/validators/not-exist-user-email.validator';
 import { UserExistsByLoginRule } from 'src/validators/user-exist-login.validator';
@@ -64,6 +65,7 @@ import { UsersService } from './users/users.service';
     CommentLikesService,
     LikeMapper,
     ValidatePostId,
+    InjectUserIdFromJwt,
   ],
   exports: [
     UsersService, // TODO избавиться от экспорта сервиса
