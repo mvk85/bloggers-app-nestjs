@@ -35,7 +35,7 @@ async function bootstrap() {
   await dbRunner.runDb();
 
   const configService = app.get(AppConfigService);
-  const port = configService.getEnv(configEnvKeys.port) as string;
+  const port = configService.getEnv(configEnvKeys.port);
 
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe(validationPipeOption));

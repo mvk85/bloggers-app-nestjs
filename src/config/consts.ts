@@ -12,4 +12,9 @@ export enum configEnvKeys {
   mongoDBName = 'mongoDBName',
   adminLogin = 'adminLogin',
   adminPassword = 'adminPassword',
+  portPostgres = 'portPostgres',
+  hostPostgres = 'hostPostgres',
+  nameDbPostgres = 'nameDbPostgres',
+  passwordPostgres = 'passwordPostgres',
+  usernamePostgres = 'usernamePostgres',
 }

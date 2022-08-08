@@ -102,5 +102,45 @@ export class AppConfigService {
 
       return adminPassword || 'qwerty';
     }
+
+    if (key === configEnvKeys.portPostgres) {
+      const portPostgres = this.configService.get<string>(
+        configEnvKeys.portPostgres,
+      );
+
+      return portPostgres || '5432';
+    }
+
+    if (key === configEnvKeys.hostPostgres) {
+      const hostPostgres = this.configService.get<string>(
+        configEnvKeys.hostPostgres,
+      );
+
+      return hostPostgres || 'localhost';
+    }
+
+    if (key === configEnvKeys.nameDbPostgres) {
+      const nameDbPostgres = this.configService.get<string>(
+        configEnvKeys.nameDbPostgres,
+      );
+
+      return nameDbPostgres || 'social';
+    }
+
+    if (key === configEnvKeys.passwordPostgres) {
+      const passwordPostgres = this.configService.get<string>(
+        configEnvKeys.passwordPostgres,
+      );
+
+      return passwordPostgres || '111';
+    }
+
+    if (key === configEnvKeys.usernamePostgres) {
+      const usernamePostgres = this.configService.get<string>(
+        configEnvKeys.usernamePostgres,
+      );
+
+      return usernamePostgres || 'postgres';
+    }
   }
 }
