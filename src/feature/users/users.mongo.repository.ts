@@ -3,10 +3,10 @@ import { projectionCreateUserItem, projectionUserItem } from 'src/const';
 import { MongooseModelNamed } from 'src/db/const';
 import { UsersModel } from 'src/db/models.mongoose';
 import { UserDbEntity } from 'src/db/types';
-import { CreatedUserType } from './types';
+import { IUsersRepository } from './types';
 
 @Injectable()
-export class UsersRepository {
+export class UsersMongoRepository implements IUsersRepository {
   constructor(
     @Inject(MongooseModelNamed.UsersMongooseModel)
     private usersModel: typeof UsersModel,
@@ -29,23 +29,23 @@ export class UsersRepository {
     return count;
   }
 
-  async createUser(newUser: UserDbEntity): Promise<CreatedUserType | null> {
+  async createUser(newUser: UserDbEntity): Promise<string> {
     await this.usersModel.create(newUser);
 
+    return newUser.id;
+  }
+
+  async getCreatedUserById(userId: string): Promise<UserDbEntity> {
     const user = await this.usersModel
-      .findOne({ id: newUser.id })
+      .findOne({ id: userId })
       .select(projectionCreateUserItem);
 
     return user;
   }
 
-  async makeRegisteredUser(
-    newUser: UserDbEntity,
-  ): Promise<CreatedUserType | null> {
-    await this.usersModel.create(newUser);
-
+  async getRegisteredUser(userId: string): Promise<UserDbEntity> {
     const user = await this.usersModel
-      .findOne({ id: newUser.id })
+      .findOne({ id: userId })
       .select(projectionUserItem);
 
     return user;
@@ -114,7 +114,7 @@ export class UsersRepository {
     return resultUpdating.matchedCount === 1;
   }
 
-  async updateConfirmationCode(id: string, code: string) {
+  async updateConfirmationCode(id: string, code: string): Promise<boolean> {
     const resultUpdating = await this.usersModel.updateOne(
       { id },
       { $set: { confirmCode: code } },

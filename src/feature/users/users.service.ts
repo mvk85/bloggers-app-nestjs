@@ -1,19 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 import { UserDbEntity } from 'src/db/types';
-import { PaginationParams } from 'src/types';
+import { PaginationParams, RepositoryProviderKeys } from 'src/types';
 import {
   generateConfirmCode,
   generateCustomId,
   generateHash,
   generatePaginationData,
 } from 'src/utils';
-import { CreateUserFields, ResponseUsers } from './types';
-import { UsersRepository } from './users.repository';
+import { CreateUserFields, IUsersRepository, ResponseUsers } from './types';
 
 @Injectable()
 export class UsersService {
-  constructor(protected usersRepository: UsersRepository) {}
+  constructor(
+    @Inject(RepositoryProviderKeys.users)
+    private usersRepository: IUsersRepository,
+  ) {}
 
   async getUsers(paginationParams: PaginationParams): Promise<ResponseUsers> {
     const usersCount = await this.usersRepository.getCountUsers();
@@ -64,7 +66,10 @@ export class UsersService {
       true,
     );
 
-    const createdUser = await this.usersRepository.createUser(newUser);
+    const createdUserId = await this.usersRepository.createUser(newUser);
+    const createdUser = await this.usersRepository.getCreatedUserById(
+      createdUserId,
+    );
 
     return createdUser;
   }
@@ -81,9 +86,12 @@ export class UsersService {
       generateConfirmCode(),
     );
 
-    const createdUser = await this.usersRepository.makeRegisteredUser(newUser);
+    const registeredUserId = await this.usersRepository.createUser(newUser);
+    const registeredUser = await this.usersRepository.getRegisteredUser(
+      registeredUserId,
+    );
 
-    return createdUser;
+    return registeredUser;
   }
 
   async deleteUserById(id: string) {

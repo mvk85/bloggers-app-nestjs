@@ -18,7 +18,7 @@ import { UserValidatorModel } from './dto/user.validator';
 
 @Controller('users')
 export class UsersController {
-  constructor(protected usersService: UsersService) {}
+  constructor(private usersService: UsersService) {}
 
   @Get()
   @HttpCode(HttpStatus.OK)
