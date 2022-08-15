@@ -1,17 +1,21 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import {
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { BloggersRepository } from '../bloggers.repository';
+import { RepositoryProviderKeys } from 'src/types';
+import { IBloggersRepository } from '../types';
 
 export const bloggerExistKey = 'BloggerExist';
 
 @ValidatorConstraint({ name: bloggerExistKey, async: true })
 @Injectable()
 export class BloggerExistsByIdRule implements ValidatorConstraintInterface {
-  constructor(private bloggersRepository: BloggersRepository) {}
+  constructor(
+    @Inject(RepositoryProviderKeys.bloggers)
+    private bloggersRepository: IBloggersRepository,
+  ) {}
 
   async validate(value: string) {
     try {

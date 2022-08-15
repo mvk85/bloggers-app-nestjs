@@ -1,18 +1,28 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 import { BloggerDbEntity } from 'src/db/types';
-import { PaginationParams, ResponseBloggers } from 'src/types';
+import {
+  PaginationParams,
+  RepositoryProviderKeys,
+  ResponseBloggers,
+} from 'src/types';
 import { generateCustomId, generatePaginationData } from 'src/utils';
 import { PostsLikesMapper } from '../posts/likes-post.mapper';
-import { PostsRepository } from '../posts/posts.repository';
-import { BloggersRepository } from './bloggers.repository';
-import { FilterBloggersParams, ResponsePostsByBloggerId } from './types';
+import { IPostsRepository } from '../posts/types';
+import {
+  BloggerEntity,
+  FilterBloggersParams,
+  IBloggersRepository,
+  ResponsePostsByBloggerId,
+} from './types';
 
 @Injectable()
 export class BloggersService {
   constructor(
-    protected bloggersRepository: BloggersRepository,
-    protected postsRepository: PostsRepository,
+    @Inject(RepositoryProviderKeys.bloggers)
+    private bloggersRepository: IBloggersRepository,
+    @Inject(RepositoryProviderKeys.posts)
+    private postsRepository: IPostsRepository,
     private postsLikesMapper: PostsLikesMapper,
   ) {}
 
@@ -20,12 +30,8 @@ export class BloggersService {
     filterParams: FilterBloggersParams = {},
     paginationParams: PaginationParams,
   ): Promise<ResponseBloggers> {
-    const filter = filterParams.SearchNameTerm
-      ? { name: { $regex: filterParams.SearchNameTerm } }
-      : {};
-
     const bloggersCount = await this.bloggersRepository.getCountBloggers(
-      filter,
+      filterParams.SearchNameTerm,
     );
     const paginationData = generatePaginationData(
       paginationParams,
@@ -33,7 +39,7 @@ export class BloggersService {
     );
 
     const bloggers = await this.bloggersRepository.getBloggers(
-      filter,
+      filterParams.SearchNameTerm,
       paginationData.skip,
       paginationData.pageSize,
     );
@@ -52,14 +58,13 @@ export class BloggersService {
     paginationParams: PaginationParams,
     userId?: string,
   ): Promise<ResponsePostsByBloggerId> {
-    const filter = { bloggerId };
-    const postsCount = await this.postsRepository.getCountPosts(filter);
+    const postsCount = await this.postsRepository.getCountPosts(bloggerId);
     const paginationData = generatePaginationData(paginationParams, postsCount);
 
     const posts = await this.postsRepository.getPosts(
-      filter,
       paginationData.skip,
       paginationData.pageSize,
+      bloggerId,
     );
 
     return {
@@ -71,13 +76,16 @@ export class BloggersService {
     };
   }
 
-  async getBloggerById(id: string): Promise<BloggerDbEntity | null> {
+  async getBloggerById(id: string): Promise<BloggerEntity | null> {
     const blogger = await this.bloggersRepository.getBloggerById(id);
 
     return blogger;
   }
 
-  async createBlogger(name: string, youtubeUrl: string) {
+  async createBlogger(
+    name: string,
+    youtubeUrl: string,
+  ): Promise<BloggerEntity> {
     const newBloggers: BloggerDbEntity = new BloggerDbEntity(
       new ObjectId(),
       generateCustomId(),
@@ -85,8 +93,11 @@ export class BloggersService {
       youtubeUrl,
     );
 
-    const createdBlogger = await this.bloggersRepository.createBlogger(
+    const newBloggerId = await this.bloggersRepository.createBlogger(
       newBloggers,
+    );
+    const createdBlogger = await this.bloggersRepository.getBloggerById(
+      newBloggerId,
     );
 
     return createdBlogger;

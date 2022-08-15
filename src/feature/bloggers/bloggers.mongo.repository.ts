@@ -3,20 +3,22 @@ import { removeObjectIdOption } from 'src/const';
 import { MongooseModelNamed } from 'src/db/const';
 import { BloggersModel } from 'src/db/models.mongoose';
 import { BloggerDbEntity } from 'src/db/types';
-import { FilterBloggers } from './types';
+import { BloggerEntity, FilterBloggers, IBloggersRepository } from './types';
 
 @Injectable()
-export class BloggersRepository {
+export class BloggersMongoRepository implements IBloggersRepository {
   constructor(
     @Inject(MongooseModelNamed.BloggersMongooseModel)
     private bloggersModel: typeof BloggersModel,
   ) {}
 
   async getBloggers(
-    filter: FilterBloggers,
+    SearchNameTerm: string,
     skip: number,
     limit: number,
   ): Promise<BloggerDbEntity[]> {
+    const filter: FilterBloggers = this.getFilter(SearchNameTerm);
+
     const bloggers = await this.bloggersModel
       .find(filter, removeObjectIdOption)
       .skip(skip)
@@ -26,13 +28,18 @@ export class BloggersRepository {
     return bloggers;
   }
 
-  async getCountBloggers(filter: FilterBloggers): Promise<number> {
+  private getFilter(SearchNameTerm: string): FilterBloggers {
+    return SearchNameTerm ? { name: { $regex: SearchNameTerm } } : {};
+  }
+
+  async getCountBloggers(SearchNameTerm: string): Promise<number> {
+    const filter: FilterBloggers = this.getFilter(SearchNameTerm);
     const count = await this.bloggersModel.count(filter);
 
     return count;
   }
 
-  async getBloggerById(id: string): Promise<BloggerDbEntity | null> {
+  async getBloggerById(id: string): Promise<BloggerEntity | null> {
     const query = this.bloggersModel.findOne({ id }, removeObjectIdOption);
 
     const blogger = await query;
@@ -40,7 +47,7 @@ export class BloggersRepository {
     return blogger;
   }
 
-  async getBloggerByIdOrThrow(id: string): Promise<BloggerDbEntity | null> {
+  async getBloggerByIdOrThrow(id: string): Promise<BloggerEntity | null> {
     const blogger = await this.getBloggerById(id);
 
     if (!blogger) {
@@ -50,20 +57,13 @@ export class BloggersRepository {
     return blogger;
   }
 
-  async createBlogger(
-    newBlogger: BloggerDbEntity,
-  ): Promise<BloggerDbEntity | null> {
+  async createBlogger(newBlogger: BloggerDbEntity): Promise<string> {
     await this.bloggersModel.create(newBlogger);
 
-    const blogger = await this.bloggersModel.findOne(
-      { id: newBlogger.id },
-      removeObjectIdOption,
-    );
-
-    return blogger;
+    return newBlogger.id;
   }
 
-  async deleteBloggerById(id: string) {
+  async deleteBloggerById(id: string): Promise<boolean> {
     const result = await this.bloggersModel.deleteOne({ id });
 
     return result.deletedCount === 1;
@@ -72,7 +72,7 @@ export class BloggersRepository {
   async updateBloggerById(
     id: string,
     { name, youtubeUrl }: { name: string; youtubeUrl: string },
-  ) {
+  ): Promise<boolean> {
     const result = await this.bloggersModel.updateOne(
       { id },
       { $set: { name, youtubeUrl } },
