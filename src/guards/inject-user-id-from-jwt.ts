@@ -1,14 +1,21 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  Inject,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { JwtUtility } from 'src/auth/jwt-utility';
-import { UsersRepository } from 'src/feature/users/users.repository';
+import { IUsersRepository } from 'src/feature/users/types';
+import { RepositoryProviderKeys } from 'src/types';
 
-// TODO узнать, нормально ли так делать (делается только подмешинвание, без прерывания)
+// TODO узнать, как правильно сделать (делается только подмешинвание, без прерывания)
 @Injectable()
 export class InjectUserIdFromJwt implements CanActivate {
   constructor(
     protected jwtUtility: JwtUtility,
-    protected usersRepository: UsersRepository,
+    @Inject(RepositoryProviderKeys.users)
+    private usersRepository: IUsersRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

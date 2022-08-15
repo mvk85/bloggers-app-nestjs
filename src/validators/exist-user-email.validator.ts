@@ -1,17 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import {
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { UsersRepository } from 'src/feature/users/users.repository';
+import { IUsersRepository } from 'src/feature/users/types';
+import { RepositoryProviderKeys } from 'src/types';
 
 export const existsUserByEmailKey = 'ExistsUserByEmail';
 
 @ValidatorConstraint({ name: existsUserByEmailKey, async: true })
 @Injectable()
 export class ExistsUserByEmailRule implements ValidatorConstraintInterface {
-  constructor(private usersRepository: UsersRepository) {}
+  constructor(
+    @Inject(RepositoryProviderKeys.users)
+    private usersRepository: IUsersRepository,
+  ) {}
 
   async validate(value: string) {
     const user = await this.usersRepository.findUserByEmail(value);

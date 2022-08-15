@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-import { AppConfigService } from 'src/config/app-config.service';
-import { configEnvKeys } from 'src/config/consts';
+import { AppConfigProvidersKey, IEmailAdapterSettings } from 'src/config/types';
 
 @Injectable()
 export class EmailAtapter {
@@ -9,13 +8,12 @@ export class EmailAtapter {
 
   private emailPassword: string;
 
-  constructor(private appConfigService: AppConfigService) {
-    this.emailAddress = this.appConfigService.getEnv(
-      configEnvKeys.emailAddressApp,
-    );
-    this.emailPassword = this.appConfigService.getEnv(
-      configEnvKeys.emailPasswordApp,
-    );
+  constructor(
+    @Inject(AppConfigProvidersKey.emailAdapterSettings)
+    private appConfigService: IEmailAdapterSettings,
+  ) {
+    this.emailAddress = this.appConfigService.getEmailAddres();
+    this.emailPassword = this.appConfigService.getEmailPassword();
   }
 
   async sendEmail(

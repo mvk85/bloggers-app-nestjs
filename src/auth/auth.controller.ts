@@ -9,9 +9,9 @@ import {
   BadRequestException,
   Req,
   UseGuards,
+  Inject,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { AppConfigService } from 'src/config/app-config.service';
 import { CurrentUserIdFromJwt } from 'src/decorators/current-user-id.decorator';
 import { AuthService } from './auth.service';
 import { IpCheckerGuard } from './guards/ip-checker.guard';
@@ -20,6 +20,8 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { UserSignInValidatorModel } from './dto/user-login.validator';
 import { UserValidatorModel } from './dto/user.validator';
+import { AppSettingConfig } from 'src/config/app-setting.config';
+import { AppConfigProvidersKey } from 'src/config/types';
 
 @Controller('auth')
 export class AuthController {
@@ -27,9 +29,10 @@ export class AuthController {
 
   constructor(
     protected authService: AuthService,
-    private appConfigService: AppConfigService,
+    @Inject(AppConfigProvidersKey.appConfigSetting)
+    private appSettingConfig: AppSettingConfig,
   ) {
-    this.isProduction = this.appConfigService.isProduction;
+    this.isProduction = this.appSettingConfig.isProduction;
   }
 
   @Post('login')

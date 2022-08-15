@@ -4,11 +4,9 @@ import { configEnvKeys } from 'src/config/consts';
 
 export const jwtModuleAsyncOptions: JwtModuleAsyncOptions = {
   useFactory: async (appConfigService: AppConfigService) => ({
-    secret: appConfigService.getEnv(configEnvKeys.jwtAccessSecret) as string,
+    secret: appConfigService.getEnv(configEnvKeys.jwtAccessSecret),
     signOptions: {
-      expiresIn: appConfigService.getEnv(
-        configEnvKeys.accessTokenExpired,
-      ) as string,
+      expiresIn: appConfigService.getEnv(configEnvKeys.accessTokenExpired),
     },
   }),
   inject: [AppConfigService],

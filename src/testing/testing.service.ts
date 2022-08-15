@@ -1,19 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AuthRepository } from 'src/auth/auth.repository';
 import { IpCheckerRepository } from 'src/auth/ip-checker/ip-checker.repository';
-import { BloggersRepository } from 'src/feature/bloggers/bloggers.repository';
+import { IBloggersRepository } from 'src/feature/bloggers/types';
 import { CommentsRepository } from 'src/feature/comments/comments.repository';
-import { PostsRepository } from 'src/feature/posts/posts.repository';
-import { UsersRepository } from 'src/feature/users/users.repository';
+import { IPostsRepository } from 'src/feature/posts/types';
+import { IUsersRepository } from 'src/feature/users/types';
+import { RepositoryProviderKeys } from 'src/types';
 
 @Injectable()
 export class TestingService {
   constructor(
-    protected bloggersRepository: BloggersRepository,
+    @Inject(RepositoryProviderKeys.bloggers)
+    private bloggersRepository: IBloggersRepository,
     protected commentsRepository: CommentsRepository,
-    protected postsRepository: PostsRepository,
+    @Inject(RepositoryProviderKeys.posts)
+    private postsRepository: IPostsRepository,
     protected requestsRepository: IpCheckerRepository,
-    protected usersRepository: UsersRepository,
+    @Inject(RepositoryProviderKeys.users)
+    private usersRepository: IUsersRepository,
     protected authRepository: AuthRepository,
   ) {}
 

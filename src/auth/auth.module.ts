@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { FeatureModule } from 'src/feature/feature.module';
+import { RepositoriesModule } from 'src/feature/repositories.module';
 import { AuthController } from './auth.controller';
 import { AuthRepository } from './auth.repository';
 import { AuthService } from './auth.service';
@@ -22,9 +24,11 @@ import { LocalStrategy } from './strategies/local-auth.strategy';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(),
     FeatureModule,
     PassportModule,
     JwtModule.registerAsync(jwtModuleAsyncOptions),
+    RepositoriesModule.forRoot(),
   ],
   controllers: [AuthController],
   providers: [
