@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { AppConfigService } from './config/app-config.service';
 import AppConfigModule from './config/config.module';
-import { connectPosgresFactory } from './db/connect-factory.postgres';
+import { connectPostgresFactory } from './db/connect-factory.postgres';
 import { DbModule } from './db/db.module';
 import { FeatureModule } from './feature/feature.module';
 import { TestingAppModule } from './testing/testing.module';
@@ -17,10 +17,10 @@ import { TestingAppModule } from './testing/testing.module';
     AuthModule,
     FeatureModule,
     TestingAppModule,
-    // TypeOrmModule.forRootAsync({
-    //   useFactory: connectPosgresFactory,
-    //   inject: [AppConfigService],
-    // }),
+    TypeOrmModule.forRootAsync({
+      useFactory: connectPostgresFactory,
+      inject: [AppConfigService],
+    }),
   ],
 })
 export class AppModule {}
