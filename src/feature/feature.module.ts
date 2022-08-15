@@ -8,7 +8,6 @@ import { ValidatePostId } from 'src/feature/posts/guards/validate-post-id.guard'
 import { NotExistsUserByEmailRule } from 'src/validators/not-exist-user-email.validator';
 import { UserExistsByLoginRule } from 'src/validators/user-exist-login.validator';
 import { BloggersController } from './bloggers/bloggers.controller';
-import { BloggersRepository } from './bloggers/bloggers.repository';
 import { BloggersService } from './bloggers/bloggers.service';
 import { BloggerExistsByIdRule } from './bloggers/decorators/blogger-exist.rule';
 import { CommentLikesService } from './comments/comment-like.service';
@@ -25,15 +24,19 @@ import { LikeMapper } from './posts/likes.mapper';
 import { PostCreateService } from './posts/post-create.service';
 import { PostLikesService } from './posts/post-like.service';
 import { PostsController } from './posts/posts.controller';
-import { PostsRepository } from './posts/posts.repository';
 import { PostsService } from './posts/posts.service';
 import { UsersController } from './users/users.controller';
-import { UsersRepository } from './users/users.repository';
 import { UsersService } from './users/users.service';
 import { ValidateCommentId } from './comments/guards/validate-comment-id.guard';
+import { RepositoriesModule } from './repositories.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [JwtModule.registerAsync(jwtModuleAsyncOptions)],
+  imports: [
+    ConfigModule.forRoot(),
+    JwtModule.registerAsync(jwtModuleAsyncOptions),
+    RepositoriesModule.forRoot(),
+  ],
   controllers: [
     BloggersController,
     CommentsController,
@@ -42,13 +45,10 @@ import { ValidateCommentId } from './comments/guards/validate-comment-id.guard';
   ],
   providers: [
     BloggersService,
-    BloggersRepository,
     PostsService,
-    PostsRepository,
     CommentsService,
     CommentsRepository,
     UsersService,
-    UsersRepository,
     BloggerExistsByIdRule,
     PostExistsByIdRule,
     NotExistsUserByEmailRule,
@@ -71,10 +71,7 @@ import { ValidateCommentId } from './comments/guards/validate-comment-id.guard';
   ],
   exports: [
     UsersService, // TODO избавиться от экспорта сервиса
-    UsersRepository,
-    BloggersRepository,
     CommentsRepository,
-    PostsRepository,
   ],
 })
 export class FeatureModule {}

@@ -1,4 +1,4 @@
-import { BloggerDbEntity } from './db/types';
+import { BloggerEntity } from './feature/bloggers/types';
 
 export type PaginationParams = {
   PageNumber?: string;
@@ -13,5 +13,11 @@ export type PaginationData = {
 };
 
 export type ResponseBloggers = PaginationData & {
-  items: BloggerDbEntity[];
+  items: BloggerEntity[];
 };
+
+export enum RepositoryProviderKeys {
+  bloggers = 'bloggersRepositoryProvider',
+  posts = 'postsRepositoryProvider',
+  users = 'usersRepositoryProvider',
+}
