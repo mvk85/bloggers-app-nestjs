@@ -6,10 +6,9 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtUtility } from 'src/auth/jwt-utility';
-import { IUsersRepository } from 'src/feature/users/types';
+import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
 import { RepositoryProviderKeys } from 'src/types';
 
-// TODO узнать, как правильно сделать (делается только подмешинвание, без прерывания)
 @Injectable()
 export class InjectUserIdFromJwt implements CanActivate {
   constructor(
@@ -20,14 +19,13 @@ export class InjectUserIdFromJwt implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: Request = context.switchToHttp().getRequest();
+    const token = req.cookies && req.cookies.refreshToken;
 
-    if (!req.headers.authorization) {
+    if (!token) {
       return true;
     }
 
-    const token = req.headers.authorization.split(' ')[1];
-
-    const userId = await this.jwtUtility.getUserIdByToken(token);
+    const userId = await this.jwtUtility.getUserIdByToken(token, true);
 
     if (!userId) {
       return true;
