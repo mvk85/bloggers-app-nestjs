@@ -1,14 +1,19 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ObjectId } from 'mongodb';
 import { UserDbEntity } from 'src/db/types';
 import { PaginationParams, RepositoryProviderKeys } from 'src/types';
 import {
   generateConfirmCode,
-  generateCustomId,
   generateHash,
   generatePaginationData,
 } from 'src/utils';
-import { CreateUserFields, IUsersRepository, ResponseUsers } from './types';
+import { IUsersRepository } from './repositories/IUsersRepository';
+import {
+  UserCreateFields,
+  ResponseUsers,
+  UserCreateType,
+  CreatedUserResponse,
+  RegisteredUserResponse,
+} from './types';
 
 @Injectable()
 export class UsersService {
@@ -55,43 +60,35 @@ export class UsersService {
     return this.usersRepository.registrationConfirmed(id);
   }
 
-  async addUser(fields: CreateUserFields) {
+  async addUser(fields: UserCreateFields): Promise<CreatedUserResponse> {
     const passwordHash = await generateHash(fields.password);
-    const newUser = new UserDbEntity(
-      new ObjectId(),
-      generateCustomId(),
-      fields.login,
-      passwordHash,
-      fields.email,
-      true,
-    );
+    const newUser: UserCreateType = {
+      login: fields.login,
+      passwordHash: passwordHash,
+      email: fields.email,
+      isConfirmed: true,
+    };
 
-    const createdUserId = await this.usersRepository.createUser(newUser);
-    const createdUser = await this.usersRepository.getCreatedUserById(
-      createdUserId,
-    );
+    const createdUser = await this.usersRepository.createUser(newUser);
 
     return createdUser;
   }
 
-  async makeRegisteredUser(fields: CreateUserFields) {
+  async makeRegisteredUser(
+    fields: UserCreateFields,
+  ): Promise<RegisteredUserResponse> {
     const passwordHash = await generateHash(fields.password);
-    const newUser = new UserDbEntity(
-      new ObjectId(),
-      generateCustomId(),
-      fields.login,
-      passwordHash,
-      fields.email,
-      false,
-      generateConfirmCode(),
-    );
+    const newUser: UserCreateType = {
+      login: fields.login,
+      passwordHash: passwordHash,
+      email: fields.email,
+      isConfirmed: false,
+      confirmCode: generateConfirmCode(),
+    };
 
-    const registeredUserId = await this.usersRepository.createUser(newUser);
-    const registeredUser = await this.usersRepository.getRegisteredUser(
-      registeredUserId,
-    );
+    const createdUser = await this.usersRepository.createUser(newUser);
 
-    return registeredUser;
+    return { ...createdUser, email: fields.email };
   }
 
   async deleteUserById(id: string) {

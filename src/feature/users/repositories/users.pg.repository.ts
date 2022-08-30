@@ -2,7 +2,8 @@ import { NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { UserDbEntity } from 'src/db/types';
 import { DataSource } from 'typeorm';
-import { IUsersRepository } from './types';
+import { CreatedUserResponse, UserCreateType } from '../types';
+import { IUsersRepository } from './IUsersRepository';
 
 export class UsersPgRepository implements IUsersRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
@@ -30,7 +31,7 @@ export class UsersPgRepository implements IUsersRepository {
     return result[0].count;
   }
 
-  async createUser(newUser: UserDbEntity): Promise<string> {
+  async createUser(user: UserCreateType): Promise<CreatedUserResponse> {
     const result = await this.dataSource.query(
       `
       insert into "Users"
@@ -39,42 +40,15 @@ export class UsersPgRepository implements IUsersRepository {
       returning "id";
       `,
       [
-        newUser.passwordHash,
-        newUser.isConfirmed,
-        newUser.confirmCode,
-        newUser.login,
-        newUser.email,
+        user.passwordHash,
+        user.isConfirmed,
+        user.confirmCode,
+        user.login,
+        user.email,
       ],
     );
 
-    return result[0].id;
-  }
-
-  async getCreatedUserById(userId: string): Promise<UserDbEntity> {
-    const result = await this.dataSource.query(
-      `
-      select "id", "login"
-      from "Users"  
-      where "id" = $1
-    `,
-      [userId],
-    );
-
-    return result[0];
-  }
-
-  // TODO modify returned type in this class
-  async getRegisteredUser(userId: string): Promise<UserDbEntity> {
-    const result = await this.dataSource.query(
-      `
-      select "id", "login", "email" 
-      from "Users"  
-      where "id" = $1
-    `,
-      [userId],
-    );
-
-    return result[0];
+    return { id: result[0].id, login: user.login };
   }
 
   async deleteUserByid(id: string): Promise<boolean> {

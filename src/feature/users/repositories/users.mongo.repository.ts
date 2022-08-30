@@ -1,9 +1,12 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { projectionCreateUserItem, projectionUserItem } from 'src/const';
+import { ObjectId } from 'mongodb';
+import { projectionUserItem } from 'src/const';
 import { MongooseModelNamed } from 'src/db/const';
 import { UsersModel } from 'src/db/models.mongoose';
 import { UserDbEntity } from 'src/db/types';
-import { IUsersRepository } from './types';
+import { generateCustomId } from 'src/utils';
+import { CreatedUserResponse, UserCreateType } from '../types';
+import { IUsersRepository } from './IUsersRepository';
 
 @Injectable()
 export class UsersMongoRepository implements IUsersRepository {
@@ -29,26 +32,19 @@ export class UsersMongoRepository implements IUsersRepository {
     return count;
   }
 
-  async createUser(newUser: UserDbEntity): Promise<string> {
+  async createUser(user: UserCreateType): Promise<CreatedUserResponse> {
+    const newUser = new UserDbEntity(
+      new ObjectId(),
+      generateCustomId(),
+      user.login,
+      user.passwordHash,
+      user.email,
+      user.isConfirmed,
+      user.confirmCode,
+    );
     await this.usersModel.create(newUser);
 
-    return newUser.id;
-  }
-
-  async getCreatedUserById(userId: string): Promise<UserDbEntity> {
-    const user = await this.usersModel
-      .findOne({ id: userId })
-      .select(projectionCreateUserItem);
-
-    return user;
-  }
-
-  async getRegisteredUser(userId: string): Promise<UserDbEntity> {
-    const user = await this.usersModel
-      .findOne({ id: userId })
-      .select(projectionUserItem);
-
-    return user;
+    return { id: newUser.id, login: user.login };
   }
 
   async deleteUserByid(id: string): Promise<boolean> {

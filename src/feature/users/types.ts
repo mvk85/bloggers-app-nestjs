@@ -11,40 +11,24 @@ export type ResponseUsers = PaginationData & {
   items: UserDbEntity[];
 };
 
-export type CreateUserFields = {
+export type UserCreateFields = {
   login: string;
   password: string;
   email: string;
 };
 
-export interface IUsersRepository {
-  getUsers(skip: number, limit: number): Promise<UserDbEntity[]>;
+export type UserCreateType = {
+  login: string;
+  passwordHash: string;
+  email: string;
+  isConfirmed: boolean;
+  confirmCode?: string | null;
+};
 
-  getCountUsers(): Promise<number>;
+export type CreatedUserResponse = { id: string; login: string };
 
-  createUser(newUser: UserDbEntity): Promise<string>;
-
-  getCreatedUserById(userId: string): Promise<UserDbEntity>;
-
-  getRegisteredUser(userId: string): Promise<UserDbEntity>;
-
-  deleteUserByid(id: string): Promise<boolean>;
-
-  findUserByLogin(login: string): Promise<UserDbEntity | null>;
-
-  findUserByLoginOrThrow(login: string): Promise<UserDbEntity | null>;
-
-  findUserByEmail(email: string): Promise<UserDbEntity | null>;
-
-  findUserByEmailOrThrow(email: string): Promise<UserDbEntity | null>;
-
-  findUserByUserId(id: string): Promise<UserDbEntity | null>;
-
-  findUserByConfirmationCode(code: string): Promise<UserDbEntity | null>;
-
-  deleteAllUsers(): void;
-
-  registrationConfirmed(id: string): Promise<boolean>;
-
-  updateConfirmationCode(id: string, code: string): Promise<boolean>;
-}
+export type RegisteredUserResponse = {
+  id: string;
+  login: string;
+  email: string;
+};
