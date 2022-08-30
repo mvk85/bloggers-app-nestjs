@@ -69,6 +69,60 @@ describe('bloggers api', () => {
         helperPosts.expectPostSchema(response.body.items[1]);
         helperPosts.expectPostSchema(response.body.items[2]);
       });
+
+      it('Should create new post when the data is correct', async () => {
+        const postCreateFields = await createPosts.makeDataCreateObject();
+        const apiUrl = urlBuilder.addSubdirectory('posts').build();
+
+        const response = await request(app.getHttpServer())
+          .post(apiUrl)
+          .set(authHelper.makeBasicHeader())
+          .send(postCreateFields);
+
+        expect(response.status).toEqual(HttpStatus.CREATED);
+        expect(response.body.title).toEqual(postCreateFields.title);
+        expect(response.body.shortDescription).toEqual(
+          postCreateFields.shortDescription,
+        );
+        expect(response.body.content).toEqual(postCreateFields.content);
+        expect(response.body.bloggerId).toEqual(postCreateFields.bloggerId);
+        helperPosts.expectPostSchema(response.body);
+      });
+
+      // TODO узнать, хорошая ли практика так делать тест!
+      it('Should return post after created when the data is correct', async () => {
+        const postCreateFields = await createPosts.makeDataCreateObject();
+        const apiUrlCreated = urlBuilder.addSubdirectory('posts').build();
+
+        const responsePostCreated = await request(app.getHttpServer())
+          .post(apiUrlCreated)
+          .set(authHelper.makeBasicHeader())
+          .send(postCreateFields);
+
+        urlBuilder.clear();
+
+        const apiUrlGetting = urlBuilder
+          .addSubdirectory('posts')
+          .addSubdirectory(responsePostCreated.body.id)
+          .build();
+
+        const responsePostGetById = await request(app.getHttpServer())
+          .get(apiUrlGetting)
+          .send(postCreateFields);
+
+        expect(responsePostGetById.status).toEqual(HttpStatus.OK);
+        expect(responsePostGetById.body.title).toEqual(postCreateFields.title);
+        expect(responsePostGetById.body.shortDescription).toEqual(
+          postCreateFields.shortDescription,
+        );
+        expect(responsePostGetById.body.content).toEqual(
+          postCreateFields.content,
+        );
+        expect(responsePostGetById.body.bloggerId).toEqual(
+          postCreateFields.bloggerId,
+        );
+        helperPosts.expectPostSchema(responsePostCreated.body);
+      });
     });
     describe('/post/:id', () => {
       it('should return post by id when post exist (without likes)', async () => {

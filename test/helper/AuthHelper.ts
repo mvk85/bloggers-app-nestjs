@@ -4,8 +4,6 @@ import { JwtUtility } from 'src/auth/jwt-utility';
 export class AuthHelper {
   jwtUtility: JwtUtility;
 
-  readonly basicAuthHeader = { Authorization: 'Basic YWRtaW46cXdlcnR5' };
-
   constructor(private readonly testingModule: TestingModule) {
     this.jwtUtility = testingModule.get<JwtUtility>(JwtUtility);
   }
@@ -24,5 +22,9 @@ export class AuthHelper {
     const token = this.generateJwtTokens(userId);
 
     return `refreshToken=${token.refresh}`; // nameOne=valueOne
+  }
+
+  makeBasicHeader() {
+    return { Authorization: 'Basic YWRtaW46cXdlcnR5' };
   }
 }

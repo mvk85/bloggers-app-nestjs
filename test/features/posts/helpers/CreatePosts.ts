@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { TestingModule } from '@nestjs/testing';
-import { addMinutes } from 'date-fns';
 import { LikeItemType, LikesStatus } from 'src/db/types';
 import { IBloggersRepository } from 'src/feature/bloggers/repositories/IBloggersRepository';
 import { IPostsRepository } from 'src/feature/posts/repositories/IPostsRepository';
 import {
   LikeItemResponseType,
   LikePostFieldType,
+  PostCreateFields,
   PostResponseEntity,
 } from 'src/feature/posts/types';
 import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
@@ -111,6 +111,17 @@ export class CreatePosts {
       post,
       userPassword: user1Password,
       user: user1,
+    };
+  }
+
+  async makeDataCreateObject(): Promise<PostCreateFields> {
+    const blogger = await this.createBloggers.make();
+
+    return {
+      title: this.generateTitle(),
+      shortDescription: this.generateShortDescription(),
+      content: this.generateContent(),
+      bloggerId: blogger.id,
     };
   }
 
