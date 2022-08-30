@@ -1,18 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ObjectId } from 'mongodb';
-import { BloggerDbEntity } from 'src/db/types';
 import {
   PaginationParams,
   RepositoryProviderKeys,
   ResponseBloggers,
 } from 'src/types';
-import { generateCustomId, generatePaginationData } from 'src/utils';
-import { PostsLikesMapper } from '../posts/likes-post.mapper';
-import { IPostsRepository } from '../posts/types';
+import { generatePaginationData } from 'src/utils';
+import { IPostsRepository } from '../posts/repositories/IPostsRepository';
+import { IBloggersRepository } from './repositories/IBloggersRepository';
 import {
   BloggerEntity,
   FilterBloggersParams,
-  IBloggersRepository,
   ResponsePostsByBloggerId,
 } from './types';
 
@@ -23,7 +20,6 @@ export class BloggersService {
     private bloggersRepository: IBloggersRepository,
     @Inject(RepositoryProviderKeys.posts)
     private postsRepository: IPostsRepository,
-    private postsLikesMapper: PostsLikesMapper,
   ) {}
 
   async getBloggers(
@@ -39,7 +35,7 @@ export class BloggersService {
     );
 
     const bloggers = await this.bloggersRepository.getBloggers(
-      filterParams.SearchNameTerm,
+      filterParams.SearchNameTerm || '',
       paginationData.skip,
       paginationData.pageSize,
     );
@@ -61,14 +57,15 @@ export class BloggersService {
     const postsCount = await this.postsRepository.getCountPosts(bloggerId);
     const paginationData = generatePaginationData(paginationParams, postsCount);
 
-    const posts = await this.postsRepository.getPosts(
-      paginationData.skip,
-      paginationData.pageSize,
+    const posts = await this.postsRepository.getPosts({
+      skip: paginationData.skip,
+      limit: paginationData.pageSize,
       bloggerId,
-    );
+      userId,
+    });
 
     return {
-      items: this.postsLikesMapper.normalizePostsLikes(posts, userId),
+      items: posts,
       pagesCount: paginationData.pagesCount,
       pageSize: paginationData.pageSize,
       totalCount: postsCount,
@@ -86,16 +83,10 @@ export class BloggersService {
     name: string,
     youtubeUrl: string,
   ): Promise<BloggerEntity> {
-    const newBloggers: BloggerDbEntity = new BloggerDbEntity(
-      new ObjectId(),
-      generateCustomId(),
+    const newBloggerId = await this.bloggersRepository.createBlogger({
       name,
       youtubeUrl,
-    );
-
-    const newBloggerId = await this.bloggersRepository.createBlogger(
-      newBloggers,
-    );
+    });
     const createdBlogger = await this.bloggersRepository.getBloggerById(
       newBloggerId,
     );

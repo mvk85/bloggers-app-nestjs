@@ -5,7 +5,7 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { RepositoryProviderKeys } from 'src/types';
-import { IBloggersRepository } from '../types';
+import { IBloggersRepository } from '../repositories/IBloggersRepository';
 
 export const bloggerExistKey = 'BloggerExist';
 

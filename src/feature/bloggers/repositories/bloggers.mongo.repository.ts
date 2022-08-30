@@ -1,9 +1,12 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { ObjectId } from 'mongodb';
 import { removeObjectIdOption } from 'src/const';
 import { MongooseModelNamed } from 'src/db/const';
 import { BloggersModel } from 'src/db/models.mongoose';
 import { BloggerDbEntity } from 'src/db/types';
-import { BloggerEntity, FilterBloggers, IBloggersRepository } from './types';
+import { generateCustomId } from 'src/utils';
+import { BloggerEntity, FilterBloggers } from '../types';
+import { IBloggersRepository } from './IBloggersRepository';
 
 @Injectable()
 export class BloggersMongoRepository implements IBloggersRepository {
@@ -57,7 +60,13 @@ export class BloggersMongoRepository implements IBloggersRepository {
     return blogger;
   }
 
-  async createBlogger(newBlogger: BloggerDbEntity): Promise<string> {
+  async createBlogger({ name, youtubeUrl }): Promise<string> {
+    const newBlogger: BloggerDbEntity = new BloggerDbEntity(
+      new ObjectId(),
+      generateCustomId(),
+      name,
+      youtubeUrl,
+    );
     await this.bloggersModel.create(newBlogger);
 
     return newBlogger.id;

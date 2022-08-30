@@ -38,7 +38,7 @@ export class BloggersController {
     queryBody: {
       SearchNameTerm?: string;
       PageNumber?: string;
-      PageSize: string;
+      PageSize?: string;
     },
   ) {
     const response = await this.bloggersService.getBloggers(
