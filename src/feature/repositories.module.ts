@@ -32,7 +32,6 @@ export class RepositoriesModule {
 
     return {
       module: RepositoriesModule,
-      imports: [],
       providers: providers,
       exports: providers,
     };

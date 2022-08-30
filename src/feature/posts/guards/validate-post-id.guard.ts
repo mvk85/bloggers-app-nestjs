@@ -3,13 +3,18 @@ import {
   CanActivate,
   ExecutionContext,
   NotFoundException,
+  Inject,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { PostsRepository } from 'src/feature/posts/posts.repository';
+import { RepositoryProviderKeys } from 'src/types';
+import { IPostsRepository } from '../repositories/IPostsRepository';
 
 @Injectable()
 export class ValidatePostId implements CanActivate {
-  constructor(private postsRepository: PostsRepository) {}
+  constructor(
+    @Inject(RepositoryProviderKeys.posts)
+    private postsRepository: IPostsRepository,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: Request = context.switchToHttp().getRequest();

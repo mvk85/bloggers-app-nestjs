@@ -1,4 +1,4 @@
-import { IdType, LikesStatus } from 'src/db/types';
+import { IdType, LikeItemType, LikesStatus } from 'src/db/types';
 import { PaginationData } from 'src/types';
 
 export type PostCreateFields = {
@@ -9,7 +9,7 @@ export type PostCreateFields = {
 };
 
 export type LikeItemResponseType = {
-  addedAt: Date;
+  addedAt: string;
   userId: string;
   login: string;
 };
@@ -23,6 +23,18 @@ export type ExtendedLikesInfoType = {
   newestLikes: NewestLikesType;
 };
 
+export class PostEntity {
+  constructor(
+    public id: IdType,
+    public title: string,
+    public shortDescription: string,
+    public content: string,
+    public bloggerId: string,
+    public bloggerName: string,
+    public addedAt: Date,
+  ) {}
+}
+
 // TODO как можно переименовать возвращаемые dto
 export class PostResponseEntity {
   constructor(
@@ -32,7 +44,7 @@ export class PostResponseEntity {
     public content: string,
     public bloggerId: string,
     public bloggerName: string,
-    public addedAt: Date,
+    public addedAt: string,
     public extendedLikesInfo: ExtendedLikesInfoType,
   ) {}
 }
@@ -60,4 +72,18 @@ export type PostsResponseType = PaginationData & {
 
 export type CommentsByPostIdResponseType = PaginationData & {
   items: CommentResponseType[];
+};
+
+export type GetPostsParams = {
+  skip: number;
+  limit: number;
+  bloggerId?: string;
+  userId?: string;
+};
+
+export type LikePostFieldType = {
+  userId: string;
+  likeStatus: LikeItemType;
+  addedAt: Date;
+  login: string;
 };

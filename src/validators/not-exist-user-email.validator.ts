@@ -4,7 +4,7 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-import { IUsersRepository } from 'src/feature/users/types';
+import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
 import { RepositoryProviderKeys } from 'src/types';
 
 export const notExistsUserByEmailKey = 'NotExistsUserByEmail';

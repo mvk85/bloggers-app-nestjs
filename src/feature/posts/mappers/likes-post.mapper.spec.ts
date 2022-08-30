@@ -6,6 +6,7 @@ import {
   PostDbEntity,
 } from 'src/db/types';
 import { PostsLikesMapper } from './likes-post.mapper';
+import { LikesMapper } from './likes.mapper';
 
 const generateLike = ({
   addedAt = new Date(),
@@ -30,10 +31,12 @@ const generateNewLike = (likeStatus: LikeItemType, addedAt?: Date) => {
 };
 
 describe('likes mapper', () => {
-  let likesMapper = new PostsLikesMapper();
+  let likeMapper = new LikesMapper();
+  let postsLikesMapper = new PostsLikesMapper(likeMapper);
 
   beforeEach(() => {
-    likesMapper = new PostsLikesMapper();
+    likeMapper = new LikesMapper();
+    postsLikesMapper = new PostsLikesMapper(likeMapper);
   });
 
   it('Should format like', () => {
@@ -53,7 +56,7 @@ describe('likes mapper', () => {
       login,
     };
 
-    expect(likesMapper.formatLike(like)).toEqual(formattedLike);
+    expect(postsLikesMapper.formatLike(like)).toEqual(formattedLike);
   });
 
   it('Should counted like by type', () => {
@@ -63,7 +66,7 @@ describe('likes mapper', () => {
     const like3: LikePostDbType = generateNewLike(LikeItemType.Dislike);
     const data = [like1, like2, like3];
 
-    expect(likesMapper.countByLikeType(data, LikeItemType.Like)).toEqual(
+    expect(likeMapper.countByLikeType(data, LikeItemType.Like)).toEqual(
       expectedCount,
     );
   });
@@ -82,7 +85,7 @@ describe('likes mapper', () => {
     const rawData = [like1, like2, like3, like4, like5];
     const expectData = [like1, like4, like5];
 
-    expect(likesMapper.getNewestLike(rawData)).toEqual(expectData);
+    expect(postsLikesMapper.getNewestLike(rawData)).toEqual(expectData);
   });
 
   it('Should find myStatus', () => {
@@ -94,7 +97,7 @@ describe('likes mapper', () => {
     const like3 = generateLike({ userId: userId3 });
     const data = [like1, like2, like3];
 
-    expect(likesMapper.findMyStatus(data, userId2)).toEqual(like2.likeStatus);
+    expect(likeMapper.findMyStatus(data, userId2)).toEqual(like2.likeStatus);
   });
 
   it('Should not find myStatus', () => {
@@ -106,7 +109,7 @@ describe('likes mapper', () => {
     const like3 = generateLike({ userId: userId3 });
     const data = [like1, like2, like3];
 
-    expect(likesMapper.findMyStatus(data, '5')).toEqual(LikesStatus.None);
+    expect(likeMapper.findMyStatus(data, '5')).toEqual(LikesStatus.None);
   });
 
   it('Should normalize post by likes', () => {
@@ -150,7 +153,7 @@ describe('likes mapper', () => {
       data: [like1Db, like2Db, like3Db, like4Db, like5Db],
     };
 
-    const postAddedAt = new Date('2022-08-04T15:25:22.209Z');
+    const postAddedAt = '2022-08-04T15:25:22.209Z';
     const postId = '123';
     const postTitle = 'title';
     const postShortDescription = 'desc';
@@ -200,7 +203,7 @@ describe('likes mapper', () => {
         ],
       },
     };
-    expect(likesMapper.normalizePostLikes(post, userId1)).toEqual(
+    expect(postsLikesMapper.normalizePostLikes(post, userId1)).toEqual(
       normalizePosts,
     );
   });

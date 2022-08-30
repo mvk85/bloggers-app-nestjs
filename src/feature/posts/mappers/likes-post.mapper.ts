@@ -5,12 +5,12 @@ import {
   LikesStatus,
   PostDbEntity,
 } from 'src/db/types';
-import { LikeMapper } from './likes.mapper';
-import { LikeItemResponseType, PostResponseEntity } from './types';
+import { LikesMapper } from './likes.mapper';
+import { LikeItemResponseType, PostResponseEntity } from '../types';
 
 @Injectable()
 export class PostsLikesMapper {
-  constructor(private likeMapper: LikeMapper) {}
+  constructor(private likeMapper: LikesMapper) {}
 
   public normalizePostsLikes(
     posts: PostDbEntity[],
@@ -49,7 +49,7 @@ export class PostsLikesMapper {
 
   public formatLike(like: LikePostDbType): LikeItemResponseType {
     return {
-      addedAt: like.addedAt,
+      addedAt: like.addedAt.toISOString(),
       userId: like.userId,
       login: like.login,
     };

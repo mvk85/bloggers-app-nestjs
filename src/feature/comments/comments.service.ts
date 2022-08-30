@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CommentsLikesMapper } from '../posts/likes-comment.mapper';
+import { CommentsLikesMapper } from '../posts/mappers/likes-comment.mapper';
 import { CommentsRepository } from './comments.repository';
 
 @Injectable()

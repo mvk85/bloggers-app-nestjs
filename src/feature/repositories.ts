@@ -1,11 +1,11 @@
 import { Provider } from '@nestjs/common';
 import { RepositoryProviderKeys } from 'src/types';
-import { BloggersPgRepository } from './bloggers/bloggers.pg.repository';
-import { BloggersMongoRepository } from './bloggers/bloggers.mongo.repository';
-import { PostsMongoRepository } from './posts/posts.mongo.repository';
-import { PostsPgRepository } from './posts/posts.pg.repository';
-import { UsersPgRepository } from './users/users.pg.repository';
-import { UsersMongoRepository } from './users/users.mongo.repository';
+import { BloggersPgRepository } from './bloggers/repositories/bloggers.pg.repository';
+import { BloggersMongoRepository } from './bloggers/repositories/bloggers.mongo.repository';
+import { PostsMongoRepository } from './posts/repositories/posts.mongo.repository';
+import { UsersPgRepository } from './users/repositories/users.pg.repository';
+import { UsersMongoRepository } from './users/repositories/users.mongo.repository';
+import { PostsPgRepository } from './posts/repositories/posts.pg.repository';
 
 export const bloggersMongoRepositoryProvider: Provider = {
   provide: RepositoryProviderKeys.bloggers,

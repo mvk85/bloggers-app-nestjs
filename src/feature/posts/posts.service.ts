@@ -1,19 +1,18 @@
-import { Injectable } from '@nestjs/common';
-import { PaginationParams } from 'src/types';
+import { Inject, Injectable } from '@nestjs/common';
+import { PaginationParams, RepositoryProviderKeys } from 'src/types';
 import { generatePaginationData } from 'src/utils';
-import { PostsRepository } from './posts.repository';
+import { IPostsRepository } from './repositories/IPostsRepository';
 import {
   PostCreateFields,
   PostsResponseType,
   PostResponseEntity,
 } from './types';
-import { PostsLikesMapper } from './likes-post.mapper';
 
 @Injectable()
 export class PostsService {
   constructor(
-    private postsRepository: PostsRepository,
-    private postsLikesMapper: PostsLikesMapper,
+    @Inject(RepositoryProviderKeys.posts)
+    private postsRepository: IPostsRepository,
   ) {}
 
   async getPosts(
@@ -23,14 +22,14 @@ export class PostsService {
     const postsCount = await this.postsRepository.getCountPosts();
     const paginationData = generatePaginationData(paginationParams, postsCount);
 
-    const posts = await this.postsRepository.getPosts(
-      {},
-      paginationData.skip,
-      paginationData.pageSize,
-    );
+    const posts = await this.postsRepository.getPosts({
+      skip: paginationData.skip,
+      limit: paginationData.pageSize,
+      userId,
+    });
 
     return {
-      items: this.postsLikesMapper.normalizePostsLikes(posts, userId),
+      items: posts,
       pagesCount: paginationData.pagesCount,
       pageSize: paginationData.pageSize,
       totalCount: postsCount,
@@ -42,9 +41,9 @@ export class PostsService {
     postId: string,
     userId?: string,
   ): Promise<PostResponseEntity | null> {
-    const post = await this.postsRepository.getPostById(postId);
+    const post = await this.postsRepository.getPostById(postId, userId);
 
-    return post ? this.postsLikesMapper.normalizePostLikes(post, userId) : null;
+    return post;
   }
 
   async deletePostById(id: string) {

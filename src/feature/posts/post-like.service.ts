@@ -1,14 +1,17 @@
-import { Injectable } from '@nestjs/common';
-import { ObjectId } from 'mongodb';
-import { LikeItemType, LikePostDbType, LikesStatus } from 'src/db/types';
-import { UsersRepository } from 'src/feature/users/users.repository';
-import { PostsRepository } from './posts.repository';
+import { Inject, Injectable } from '@nestjs/common';
+import { LikeItemType, LikesStatus } from 'src/db/types';
+import { RepositoryProviderKeys } from 'src/types';
+import { IUsersRepository } from '../users/repositories/IUsersRepository';
+import { IPostsRepository } from './repositories/IPostsRepository';
+import { LikePostFieldType } from './types';
 
 @Injectable()
 export class PostLikesService {
   constructor(
-    private postsRepository: PostsRepository,
-    private usersRepository: UsersRepository,
+    @Inject(RepositoryProviderKeys.posts)
+    private postsRepository: IPostsRepository,
+    @Inject(RepositoryProviderKeys.users)
+    private usersRepository: IUsersRepository,
   ) {}
 
   async setLike(likeStatus: LikesStatus, userId: string, postId: string) {
@@ -28,7 +31,7 @@ export class PostLikesService {
   private async makeLikeItem(
     likeStatus: LikesStatus,
     userId: string,
-  ): Promise<LikePostDbType> {
+  ): Promise<LikePostFieldType> {
     const userDb = await this.usersRepository.findUserByUserId(userId);
     const likeItemStatus =
       likeStatus === LikesStatus.Like
@@ -36,7 +39,6 @@ export class PostLikesService {
         : LikeItemType.Dislike;
 
     return {
-      _id: new ObjectId(),
       addedAt: new Date(),
       userId,
       login: userDb.login,

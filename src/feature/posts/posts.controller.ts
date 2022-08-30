@@ -6,6 +6,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Inject,
   NotFoundException,
   Param,
   Post,
@@ -18,7 +19,6 @@ import { CommentValidatorModel } from '../comments/dto/comment.validator';
 import { PostIdParamValidatorModel } from './dto/post-params.dto';
 import { PostValidatorModel } from './dto/post.dto';
 import { CurrentUserIdFromJwt } from 'src/decorators/current-user-id.decorator';
-import { UsersRepository } from '../users/users.repository';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { BasicAuthGuard } from 'src/auth/guards/basic-auth.guard';
 import { PostLikeDto } from './dto/post-like.dto';
@@ -28,12 +28,15 @@ import { CommentsByPostService } from './comments-by-post.service';
 import { ValidatePostId } from 'src/feature/posts/guards/validate-post-id.guard';
 import { InjectUserIdFromJwt } from 'src/guards/inject-user-id-from-jwt';
 import { GetUserIdFromJwt } from 'src/decorators/get-user-id.decorator';
+import { RepositoryProviderKeys } from 'src/types';
+import { IUsersRepository } from '../users/repositories/IUsersRepository';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private postsService: PostsService,
-    private usersRepository: UsersRepository,
+    @Inject(RepositoryProviderKeys.users)
+    private usersRepository: IUsersRepository,
     private postLikesService: PostLikesService,
     private postCreateService: PostCreateService,
     private commentsByPostService: CommentsByPostService,

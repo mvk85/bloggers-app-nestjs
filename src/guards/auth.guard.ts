@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtUtility } from 'src/auth/jwt-utility';
-import { IUsersRepository } from 'src/feature/users/types';
+import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
 import { RepositoryProviderKeys } from 'src/types';
 
 @Injectable()

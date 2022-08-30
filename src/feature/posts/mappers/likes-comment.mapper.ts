@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { CommentDbEntity, LikeItemType, LikesStatus } from 'src/db/types';
-import { LikeMapper } from './likes.mapper';
-import { CommentResponseType } from './types';
+import { LikesMapper } from './likes.mapper';
+import { CommentResponseType } from '../types';
 
 @Injectable()
 export class CommentsLikesMapper {
-  constructor(private likeMapper: LikeMapper) {}
+  constructor(private likeMapper: LikesMapper) {}
 
   public normalizeCommentsLikes(
     comments: CommentDbEntity[],

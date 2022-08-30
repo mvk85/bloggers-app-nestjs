@@ -7,7 +7,6 @@ import {
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
 
-// TODO нормальная ли это реализация проверки refresh токена?
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
   constructor(private authService: AuthService) {}

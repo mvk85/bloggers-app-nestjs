@@ -10,6 +10,7 @@ import { newDateInMilliseconds } from 'src/utils';
 import { IpCheckerService } from '../ip-checker/ip-checker.service';
 import { BruteForceItem } from '../ip-checker/types';
 
+// TODO переделать на nest реализацию (TrottleModule)
 @Injectable()
 export class IpCheckerGuard implements CanActivate {
   constructor(protected ipCheckerService: IpCheckerService) {}

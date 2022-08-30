@@ -8,7 +8,7 @@ import {
   newIsoDate,
 } from 'src/utils';
 import { CommentsRepository } from '../comments/comments.repository';
-import { CommentsLikesMapper } from './likes-comment.mapper';
+import { CommentsLikesMapper } from './mappers/likes-comment.mapper';
 import { CommentsByPostIdResponseType } from './types';
 
 @Injectable()

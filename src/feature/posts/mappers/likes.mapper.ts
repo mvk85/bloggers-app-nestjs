@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ILikeDbData, LikeItemType, LikesStatus } from 'src/db/types';
 
 @Injectable()
-export class LikeMapper {
+export class LikesMapper {
   public findMyStatus<T extends ILikeDbData>(
     data: T[],
     userId?: string,

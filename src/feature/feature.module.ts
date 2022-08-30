@@ -18,9 +18,9 @@ import { CommentExistsByIdRule } from './comments/decorators/comment-exist.rule'
 import { CommentCredentialsGuard } from './comments/guards/comment-credentials.guard';
 import { CommentsByPostService } from './posts/comments-by-post.service';
 import { PostExistsByIdRule } from './posts/decorators/post-exist.rule';
-import { CommentsLikesMapper } from './posts/likes-comment.mapper';
-import { PostsLikesMapper } from './posts/likes-post.mapper';
-import { LikeMapper } from './posts/likes.mapper';
+import { CommentsLikesMapper } from './posts/mappers/likes-comment.mapper';
+import { PostsLikesMapper } from './posts/mappers/likes-post.mapper';
+import { LikesMapper } from './posts/mappers/likes.mapper';
 import { PostCreateService } from './posts/post-create.service';
 import { PostLikesService } from './posts/post-like.service';
 import { PostsController } from './posts/posts.controller';
@@ -53,8 +53,7 @@ import { ConfigModule } from '@nestjs/config';
     PostExistsByIdRule,
     NotExistsUserByEmailRule,
     UserExistsByLoginRule,
-    JwtUtility, // TODO нормально ли так подключать напрямую в несколько мест
-    // JwtUtility нужен для AuthGuard в этом модуле
+    JwtUtility, // TODO убрать (перенести в отдельный модуль или в auth)
     CommentCredentialsGuard,
     CommentExistsByIdRule,
     BasicStrategy,
@@ -64,7 +63,7 @@ import { ConfigModule } from '@nestjs/config';
     PostsLikesMapper,
     CommentsLikesMapper,
     CommentLikesService,
-    LikeMapper,
+    LikesMapper,
     ValidatePostId,
     InjectUserIdFromJwt,
     ValidateCommentId,

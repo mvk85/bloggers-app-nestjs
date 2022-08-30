@@ -55,7 +55,7 @@ export class PostDbEntity {
     public content: string,
     public bloggerId: string,
     public bloggerName: string,
-    public addedAt: Date,
+    public addedAt: string,
     public likes: LikesPostDbType,
   ) {}
 }

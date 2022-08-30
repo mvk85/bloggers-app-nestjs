@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserDbEntity } from 'src/db/types';
-import { CreateUserFields } from 'src/feature/users/types';
+import { UserCreateFields } from 'src/feature/users/types';
 import { UsersService } from 'src/feature/users/users.service';
 import { AuthRepository } from './auth.repository';
 import { EmailManager } from './email-manager';
@@ -30,7 +30,7 @@ export class AuthService {
     return resultCompare ? user : null;
   }
 
-  async registration(createUserFields: CreateUserFields): Promise<boolean> {
+  async registration(createUserFields: UserCreateFields): Promise<boolean> {
     const createdUser = await this.usersService.makeRegisteredUser(
       createUserFields,
     );
