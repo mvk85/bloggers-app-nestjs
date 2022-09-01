@@ -3,13 +3,18 @@ import {
   CanActivate,
   ExecutionContext,
   NotFoundException,
+  Inject,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { CommentsRepository } from '../comments.repository';
+import { RepositoryProviderKeys } from 'src/types';
+import { ICommentsRepository } from '../repositories/ICommentsRepository';
 
 @Injectable()
 export class ValidateCommentId implements CanActivate {
-  constructor(private commentsRepository: CommentsRepository) {}
+  constructor(
+    @Inject(RepositoryProviderKeys.comments)
+    private readonly commentsRepository: ICommentsRepository,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: Request = context.switchToHttp().getRequest();

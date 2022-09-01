@@ -2,14 +2,28 @@ import { Inject, Injectable } from '@nestjs/common';
 import { commentsProjection, removeObjectIdOption } from 'src/const';
 import { MongooseModelNamed } from 'src/db/const';
 import { CommentsModel } from 'src/db/models.mongoose';
-import { FilterComments } from './types';
-import { CommentDbEntity, LikeCommentDbType } from 'src/db/types';
+import {
+  CommentCreateFields,
+  FilterComments,
+  LikeCommentFieldType,
+} from '../types';
+import { CommentDbEntity, LikesStatus } from 'src/db/types';
+import { ICommentsRepository } from './ICommentsRepository';
+import { ObjectId } from 'mongodb';
+import { generateCustomId, newIsoDate } from 'src/utils';
+import { RepositoryProviderKeys } from 'src/types';
+import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
+import { CommentsLikesMapper } from 'src/feature/posts/mappers/likes-comment.mapper';
+import { CommentResponseType } from 'src/feature/posts/types';
 
 @Injectable()
-export class CommentsRepository {
+export class CommentsMongoRepository implements ICommentsRepository {
   constructor(
     @Inject(MongooseModelNamed.CommentsMongooseModel)
     private commentsModel: typeof CommentsModel,
+    @Inject(RepositoryProviderKeys.users)
+    private usersRepository: IUsersRepository,
+    private readonly commentsLikesMapper: CommentsLikesMapper,
   ) {}
 
   async getCountComments(filter: FilterComments): Promise<number> {
@@ -18,7 +32,11 @@ export class CommentsRepository {
     return count;
   }
 
-  async getComments(filter: FilterComments, skip: number, limit: number) {
+  async getComments(
+    filter: FilterComments,
+    skip: number,
+    limit: number,
+  ): Promise<CommentDbEntity[]> {
     const comments = await this.commentsModel
       .find(filter, commentsProjection)
       .skip(skip)
@@ -28,28 +46,56 @@ export class CommentsRepository {
     return comments;
   }
 
-  async createComment(newComment: CommentDbEntity) {
+  async createComment(commentFields: CommentCreateFields) {
+    const userDb = await this.usersRepository.findUserByUserId(
+      commentFields.userId,
+    );
+    const initLike = this.makeInitLike();
+    const newComment: CommentDbEntity = new CommentDbEntity(
+      new ObjectId(),
+      generateCustomId(),
+      commentFields.content,
+      commentFields.userId,
+      userDb.login,
+      newIsoDate(),
+      commentFields.postId,
+      initLike,
+    );
     await this.commentsModel.create(newComment);
 
-    const createdComment = await this.commentsModel.findOne(
-      { id: newComment.id },
-      commentsProjection,
-    );
-
-    return createdComment;
+    return {
+      id: newComment.id,
+      content: newComment.content,
+      userId: newComment.userId,
+      userLogin: newComment.userLogin,
+      addedAt: newComment.addedAt,
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: LikesStatus.None,
+      },
+    };
   }
 
-  async getCommentById(id: string): Promise<CommentDbEntity | null> {
+  async getCommentById(
+    id: string,
+    userId?: string,
+  ): Promise<CommentResponseType | null> {
     const comment = await this.commentsModel.findOne(
       { id },
       commentsProjection,
     );
 
-    return comment;
+    return comment
+      ? this.commentsLikesMapper.normalizeCommentLikes(comment, userId)
+      : null;
   }
 
-  async getCommentByIdOrThrow(id: string): Promise<CommentDbEntity | null> {
-    const comment = await this.getCommentById(id);
+  async getCommentByIdOrThrow(
+    id: string,
+    userId?: string,
+  ): Promise<CommentResponseType | null> {
+    const comment = await this.getCommentById(id, userId);
 
     if (!comment) {
       throw new Error("Comment didn't find by id");
@@ -77,7 +123,7 @@ export class CommentsRepository {
     await this.commentsModel.deleteMany({});
   }
 
-  async addOrUpdateLike(commentId: string, likeItem: LikeCommentDbType) {
+  async addOrUpdateLike(commentId: string, likeItem: LikeCommentFieldType) {
     // TODO разделить на отдельные методы
     const likeExist = await this.commentsModel.findOne({
       id: commentId,
@@ -125,5 +171,12 @@ export class CommentsRepository {
     );
 
     return true;
+  }
+
+  private makeInitLike() {
+    return {
+      status: LikesStatus.None,
+      data: [],
+    };
   }
 }

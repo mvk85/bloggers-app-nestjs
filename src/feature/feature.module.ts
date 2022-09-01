@@ -12,7 +12,6 @@ import { BloggersService } from './bloggers/bloggers.service';
 import { BloggerExistsByIdRule } from './bloggers/decorators/blogger-exist.rule';
 import { CommentLikesService } from './comments/comment-like.service';
 import { CommentsController } from './comments/comments.controller';
-import { CommentsRepository } from './comments/comments.repository';
 import { CommentsService } from './comments/comments.service';
 import { CommentExistsByIdRule } from './comments/decorators/comment-exist.rule';
 import { CommentCredentialsGuard } from './comments/guards/comment-credentials.guard';
@@ -47,7 +46,6 @@ import { ConfigModule } from '@nestjs/config';
     BloggersService,
     PostsService,
     CommentsService,
-    CommentsRepository,
     UsersService,
     BloggerExistsByIdRule,
     PostExistsByIdRule,
@@ -70,7 +68,6 @@ import { ConfigModule } from '@nestjs/config';
   ],
   exports: [
     UsersService, // TODO избавиться от экспорта сервиса
-    CommentsRepository,
   ],
 })
 export class FeatureModule {}

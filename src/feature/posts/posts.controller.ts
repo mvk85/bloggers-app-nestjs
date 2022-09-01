@@ -6,7 +6,6 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Inject,
   NotFoundException,
   Param,
   Post,
@@ -28,15 +27,11 @@ import { CommentsByPostService } from './comments-by-post.service';
 import { ValidatePostId } from 'src/feature/posts/guards/validate-post-id.guard';
 import { InjectUserIdFromJwt } from 'src/guards/inject-user-id-from-jwt';
 import { GetUserIdFromJwt } from 'src/decorators/get-user-id.decorator';
-import { RepositoryProviderKeys } from 'src/types';
-import { IUsersRepository } from '../users/repositories/IUsersRepository';
 
 @Controller('posts')
 export class PostsController {
   constructor(
     private postsService: PostsService,
-    @Inject(RepositoryProviderKeys.users)
-    private usersRepository: IUsersRepository,
     private postLikesService: PostLikesService,
     private postCreateService: PostCreateService,
     private commentsByPostService: CommentsByPostService,
@@ -130,11 +125,9 @@ export class PostsController {
     @Body() bodyFields: CommentValidatorModel,
     @CurrentUserIdFromJwt() userId: string,
   ) {
-    const userDb = await this.usersRepository.findUserByUserId(userId);
     const newComment = await this.commentsByPostService.createComment({
       content: bodyFields.content,
       userId,
-      userLogin: userDb.login,
       postId: postParams.id,
     });
 

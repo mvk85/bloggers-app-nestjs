@@ -4,6 +4,8 @@ import { configEnvKeys } from 'src/config/consts';
 import {
   bloggersMongoRepositoryProvider,
   bloggersPgRepositoryProvider,
+  commentsMongoRepositoryProvider,
+  commentsPgRepositoryProvider,
   postsMongoRepositoryProvider,
   postsPgRepositoryProvider,
   usersMongoRepositoryProvider,
@@ -14,12 +16,14 @@ const mongoRepositories: Provider[] = [
   bloggersMongoRepositoryProvider,
   postsMongoRepositoryProvider,
   usersMongoRepositoryProvider,
+  commentsMongoRepositoryProvider,
 ];
 
 const pgRepositories: Provider[] = [
   bloggersPgRepositoryProvider,
   postsPgRepositoryProvider,
   usersPgRepositoryProvider,
+  commentsPgRepositoryProvider,
 ];
 
 @Module({})

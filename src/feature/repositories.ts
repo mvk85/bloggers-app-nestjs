@@ -6,6 +6,8 @@ import { PostsMongoRepository } from './posts/repositories/posts.mongo.repositor
 import { UsersPgRepository } from './users/repositories/users.pg.repository';
 import { UsersMongoRepository } from './users/repositories/users.mongo.repository';
 import { PostsPgRepository } from './posts/repositories/posts.pg.repository';
+import { CommentsMongoRepository } from './comments/repositories/comments.mongo.repository';
+import { CommentsPgRepository } from './comments/repositories/comments.pg.repository';
 
 export const bloggersMongoRepositoryProvider: Provider = {
   provide: RepositoryProviderKeys.bloggers,
@@ -22,6 +24,11 @@ export const usersMongoRepositoryProvider: Provider = {
   useClass: UsersMongoRepository,
 };
 
+export const commentsMongoRepositoryProvider: Provider = {
+  provide: RepositoryProviderKeys.comments,
+  useClass: CommentsMongoRepository,
+};
+
 export const bloggersPgRepositoryProvider: Provider = {
   provide: RepositoryProviderKeys.bloggers,
   useClass: BloggersPgRepository,
@@ -35,4 +42,9 @@ export const postsPgRepositoryProvider: Provider = {
 export const usersPgRepositoryProvider: Provider = {
   provide: RepositoryProviderKeys.users,
   useClass: UsersPgRepository,
+};
+
+export const commentsPgRepositoryProvider: Provider = {
+  provide: RepositoryProviderKeys.comments,
+  useClass: CommentsPgRepository,
 };

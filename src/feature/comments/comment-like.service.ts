@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
-import { ObjectId } from 'mongodb';
-import { LikeCommentDbType, LikeItemType, LikesStatus } from 'src/db/types';
-import { CommentsRepository } from './comments.repository';
+import { Inject, Injectable } from '@nestjs/common';
+import { LikeItemType, LikesStatus } from 'src/db/types';
+import { RepositoryProviderKeys } from 'src/types';
+import { ICommentsRepository } from './repositories/ICommentsRepository';
+import { LikeCommentFieldType } from './types';
 
 @Injectable()
 export class CommentLikesService {
-  constructor(private commentsRepository: CommentsRepository) {}
+  constructor(
+    @Inject(RepositoryProviderKeys.comments)
+    private readonly commentsRepository: ICommentsRepository,
+  ) {}
 
   async setLike(likeStatus: LikesStatus, userId: string, commentId: string) {
     if (likeStatus === LikesStatus.None) {
@@ -24,14 +28,13 @@ export class CommentLikesService {
   private async makeLikeItem(
     likeStatus: LikesStatus,
     userId: string,
-  ): Promise<LikeCommentDbType> {
+  ): Promise<LikeCommentFieldType> {
     const likeItemStatus =
       likeStatus === LikesStatus.Like
         ? LikeItemType.Like
         : LikeItemType.Dislike;
 
     return {
-      _id: new ObjectId(),
       addedAt: new Date(),
       userId,
       likeStatus: likeItemStatus,

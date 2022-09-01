@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { AuthRepository } from 'src/auth/auth.repository';
 import { IpCheckerRepository } from 'src/auth/ip-checker/ip-checker.repository';
 import { IBloggersRepository } from 'src/feature/bloggers/repositories/IBloggersRepository';
-import { CommentsRepository } from 'src/feature/comments/comments.repository';
+import { ICommentsRepository } from 'src/feature/comments/repositories/ICommentsRepository';
 import { IPostsRepository } from 'src/feature/posts/repositories/IPostsRepository';
 import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
 import { RepositoryProviderKeys } from 'src/types';
@@ -11,14 +11,15 @@ import { RepositoryProviderKeys } from 'src/types';
 export class TestingService {
   constructor(
     @Inject(RepositoryProviderKeys.bloggers)
-    private bloggersRepository: IBloggersRepository,
-    protected commentsRepository: CommentsRepository,
+    private readonly bloggersRepository: IBloggersRepository,
+    @Inject(RepositoryProviderKeys.comments)
+    private readonly commentsRepository: ICommentsRepository,
     @Inject(RepositoryProviderKeys.posts)
-    private postsRepository: IPostsRepository,
-    protected requestsRepository: IpCheckerRepository,
+    private readonly postsRepository: IPostsRepository,
+    private readonly requestsRepository: IpCheckerRepository,
     @Inject(RepositoryProviderKeys.users)
-    private usersRepository: IUsersRepository,
-    protected authRepository: AuthRepository,
+    private readonly usersRepository: IUsersRepository,
+    private readonly authRepository: AuthRepository,
   ) {}
 
   async deleteAllData() {
@@ -28,6 +29,6 @@ export class TestingService {
     await this.usersRepository.deleteAllUsers();
     await this.requestsRepository.deleteAllRequests();
     await this.authRepository.clearBlackListRefreshTokens();
-    // TODO need to do a cleanup of likes;
+    // TODO need to do a cleanup of likes or not?
   }
 }

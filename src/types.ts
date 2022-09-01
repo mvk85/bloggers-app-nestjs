@@ -19,5 +19,6 @@ export type ResponseBloggers = PaginationData & {
 export enum RepositoryProviderKeys {
   bloggers = 'bloggersRepositoryProvider',
   posts = 'postsRepositoryProvider',
+  comments = 'commentsRepositoryProvider',
   users = 'usersRepositoryProvider',
 }
