@@ -12,21 +12,21 @@ import {
 import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
 import { CreatedUserResponse } from 'src/feature/users/types';
 import { RepositoryProviderKeys } from 'src/types';
-import { CreateBloggers } from 'test/features/bloggers/helpers/CreateBloggers';
-import { CreateUsersHelper } from 'test/features/users/helpers/CreateUsers';
+import { TestBloggers } from 'test/features/bloggers/helpers/TestBloggers';
+import { TestUsers } from 'test/features/users/helpers/TestUsers';
 import { AuthHelper } from 'test/helper/AuthHelper';
 import { CommonTestHelper } from 'test/helper/CommonTestHelper';
 
-export class CreatePosts {
+export class TestPosts {
   postsRepository: IPostsRepository;
 
   bloggersRepository: IBloggersRepository;
 
   usersRepository: IUsersRepository;
 
-  createBloggers: CreateBloggers;
+  testBloggers: TestBloggers;
 
-  createUsersHelper: CreateUsersHelper;
+  testUsersHelper: TestUsers;
 
   dates: Date[];
 
@@ -45,15 +45,15 @@ export class CreatePosts {
       RepositoryProviderKeys.users,
     );
 
-    this.createBloggers = new CreateBloggers(this.bloggersRepository);
-    this.createUsersHelper = new CreateUsersHelper(this.usersRepository);
+    this.testBloggers = new TestBloggers(this.bloggersRepository);
+    this.testUsersHelper = new TestUsers(this.usersRepository);
     this.commonTestHelper = new CommonTestHelper();
     this.authHelper = new AuthHelper(testingModule);
     this.dates = this.commonTestHelper.generateDates();
   }
 
   async make() {
-    const blogger = await this.createBloggers.make();
+    const blogger = await this.testBloggers.make();
     const post = await this.postsRepository.createPost({
       title: this.generateTitle(),
       shortDescription: this.generateShortDescription(),
@@ -68,20 +68,20 @@ export class CreatePosts {
   }
 
   async makeWithLikes({ notAuth = false }: { notAuth?: boolean } = {}) {
-    const blogger = await this.createBloggers.make();
+    const blogger = await this.testBloggers.make();
     const postDataTable = await this.postsRepository.createPost({
       title: this.generateTitle(),
       shortDescription: this.generateShortDescription(),
       content: this.generateContent(),
       bloggerId: blogger.id,
     });
-    const user1Password = this.createUsersHelper.generatePassword();
+    const user1Password = this.testUsersHelper.generatePassword();
     const user1LikeStatus = LikesStatus.Like;
 
-    const user1 = await this.createUsersHelper.make(user1Password);
-    const user2 = await this.createUsersHelper.make(user1Password);
-    const user3 = await this.createUsersHelper.make(user1Password);
-    const user4 = await this.createUsersHelper.make(user1Password);
+    const user1 = await this.testUsersHelper.make(user1Password);
+    const user2 = await this.testUsersHelper.make(user1Password);
+    const user3 = await this.testUsersHelper.make(user1Password);
+    const user4 = await this.testUsersHelper.make(user1Password);
 
     const like1 = this.generateLike(user1LikeStatus, user1, 1);
     const like2 = this.generateLike(LikesStatus.Like, user2, 2);
@@ -114,8 +114,8 @@ export class CreatePosts {
     };
   }
 
-  async makeDataCreateObject(): Promise<PostCreateFields> {
-    const blogger = await this.createBloggers.make();
+  async makeCreatedObject(): Promise<PostCreateFields> {
+    const blogger = await this.testBloggers.make();
 
     return {
       title: this.generateTitle(),

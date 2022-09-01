@@ -3,7 +3,7 @@ import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepositor
 import { UserCreateType } from 'src/feature/users/types';
 import { generateHash } from 'src/utils';
 
-export class CreateUsersHelper {
+export class TestUsers {
   constructor(private readonly usersRepository: IUsersRepository) {}
 
   public async make(pwd?: string) {

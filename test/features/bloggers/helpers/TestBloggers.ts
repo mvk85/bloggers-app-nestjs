@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { IBloggersRepository } from 'src/feature/bloggers/repositories/IBloggersRepository';
 
-export class CreateBloggers {
+export class TestBloggers {
   constructor(private readonly bloggersRepository: IBloggersRepository) {}
 
   public async make() {

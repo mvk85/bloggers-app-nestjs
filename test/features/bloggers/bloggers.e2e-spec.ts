@@ -7,7 +7,7 @@ import { RepositoryProviderKeys } from 'src/types';
 import * as request from 'supertest';
 import { BAD_IDENTITY, basicAuthHeader } from '../const';
 import { UrlBuilder } from '../../helper/UrlBuilder';
-import { CreateBloggers } from './helpers/CreateBloggers';
+import { TestBloggers } from './helpers/TestBloggers';
 import { HelperBloggers } from './helpers/HelperBloggers';
 import { CommonTestHelper } from 'test/helper/CommonTestHelper';
 import { configTestApp } from 'test/helper/configApp';
@@ -18,7 +18,7 @@ describe('bloggers api', () => {
   let app: INestApplication;
   let bloggersRepository: IBloggersRepository;
   let helperBloggers: HelperBloggers;
-  let createBloggers: CreateBloggers;
+  let createBloggers: TestBloggers;
   let urlBuilder: UrlBuilder;
   let commonTestHelper: CommonTestHelper;
 
@@ -35,7 +35,7 @@ describe('bloggers api', () => {
       RepositoryProviderKeys.bloggers,
     );
     helperBloggers = new HelperBloggers(testingModule);
-    createBloggers = new CreateBloggers(bloggersRepository);
+    createBloggers = new TestBloggers(bloggersRepository);
     urlBuilder = new UrlBuilder();
     commonTestHelper = new CommonTestHelper();
   });

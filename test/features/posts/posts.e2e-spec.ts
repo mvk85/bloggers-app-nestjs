@@ -3,21 +3,27 @@ import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from 'src/app.module';
 import { UrlBuilder } from 'test/helper/UrlBuilder';
-import { CreatePosts } from './helpers/CreatePosts';
+import { TestPosts } from './helpers/TestPosts';
 import { HelperPosts } from './helpers/HelperPosts';
 import { AuthHelper } from 'test/helper/AuthHelper';
 import { configTestApp } from 'test/helper/configApp';
 import { BAD_IDENTITY } from '../const';
 import { DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE } from 'src/const';
+import { TestComments } from '../comments/helpers/TestComments';
+import { HelperComment } from '../comments/helpers/HelperComments';
+import { CommonTestHelper } from 'test/helper/CommonTestHelper';
 
 jest.setTimeout(1000 * 100);
 
-describe('bloggers api', () => {
+describe('posts api e2e tests', () => {
   let app: INestApplication;
   let urlBuilder: UrlBuilder;
-  let createPosts: CreatePosts;
+  let createPosts: TestPosts;
   let helperPosts: HelperPosts;
   let authHelper: AuthHelper;
+  let testComments: TestComments;
+  let helperComment: HelperComment;
+  let commonTestHelper: CommonTestHelper;
 
   beforeAll(async () => {
     const testingModule: TestingModule = await Test.createTestingModule({
@@ -29,9 +35,12 @@ describe('bloggers api', () => {
     await app.init();
 
     urlBuilder = new UrlBuilder();
-    createPosts = new CreatePosts(testingModule);
+    createPosts = new TestPosts(testingModule);
     helperPosts = new HelperPosts(testingModule);
     authHelper = new AuthHelper(testingModule);
+    testComments = new TestComments(testingModule);
+    helperComment = new HelperComment(testingModule);
+    commonTestHelper = new CommonTestHelper();
   });
 
   const clear = async () => {
@@ -61,6 +70,7 @@ describe('bloggers api', () => {
           page: DEFAULT_PAGE_NUMBER,
         };
         const apiUrl = urlBuilder.addSubdirectory('posts').build();
+
         const response = await request(app.getHttpServer()).get(apiUrl);
 
         expect(response.status).toEqual(HttpStatus.OK);
@@ -71,7 +81,7 @@ describe('bloggers api', () => {
       });
 
       it('Should create new post when the data is correct', async () => {
-        const postCreateFields = await createPosts.makeDataCreateObject();
+        const postCreateFields = await createPosts.makeCreatedObject();
         const apiUrl = urlBuilder.addSubdirectory('posts').build();
 
         const response = await request(app.getHttpServer())
@@ -91,7 +101,7 @@ describe('bloggers api', () => {
 
       // TODO узнать, хорошая ли практика так делать тест!
       it('Should return post after created when the data is correct', async () => {
-        const postCreateFields = await createPosts.makeDataCreateObject();
+        const postCreateFields = await createPosts.makeCreatedObject();
         const apiUrlCreated = urlBuilder.addSubdirectory('posts').build();
 
         const responsePostCreated = await request(app.getHttpServer())
@@ -159,7 +169,7 @@ describe('bloggers api', () => {
         helperPosts.expectPostSchema(response.body);
       });
 
-      it('Shoutd return 404 when post is not exist', async () => {
+      it('Should return 404 when post is not exist', async () => {
         const apiUrl = urlBuilder
           .addSubdirectory('posts')
           .addSubdirectory(BAD_IDENTITY)
@@ -170,6 +180,81 @@ describe('bloggers api', () => {
       });
 
       // TODO must create the negative tests! (errors, didn't find, etc)
+    });
+
+    describe('/post/:id/comments', () => {
+      it('Should create comment by postId when fields is correct', async () => {
+        const { createObject, post, user } =
+          await testComments.makeCreatedObject();
+        const apiUrl = urlBuilder
+          .addSubdirectory('posts')
+          .addSubdirectory(post.id)
+          .addSubdirectory('comments')
+          .build();
+
+        const response = await request(app.getHttpServer())
+          .post(apiUrl)
+          .set(authHelper.makeAccessHeader(user.id))
+          .send(createObject);
+
+        expect(response.status).toEqual(HttpStatus.CREATED);
+        expect(response.body.content).toEqual(createObject.content);
+        expect(response.body.userId).toEqual(user.id);
+        expect(response.body.userLogin).toEqual(user.login);
+        helperComment.expectCommentSchema(response.body);
+      });
+      it('Should return 404 when postId is not correct', async () => {
+        const { createObject, user } = await testComments.makeCreatedObject();
+        const apiUrl = urlBuilder
+          .addSubdirectory('posts')
+          .addSubdirectory(BAD_IDENTITY)
+          .addSubdirectory('comments')
+          .build();
+
+        const response = await request(app.getHttpServer())
+          .post(apiUrl)
+          .set(authHelper.makeAccessHeader(user.id))
+          .send(createObject);
+
+        expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+      });
+
+      // TODO не понятно как правильно должно работать? (userId в jwt не корректный)
+      it('Should return 400 when jwt is not correct', async () => {
+        const { createObject, post } = await testComments.makeCreatedObject();
+        const apiUrl = urlBuilder
+          .addSubdirectory('posts')
+          .addSubdirectory(post.id)
+          .addSubdirectory('comments')
+          .build();
+
+        const response = await request(app.getHttpServer())
+          .post(apiUrl)
+          .set(authHelper.makeAccessHeader(BAD_IDENTITY))
+          .send(createObject);
+
+        expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
+      });
+      it('Should return 400 when content field is not correct', async () => {
+        const { createObject, post, user } =
+          await testComments.makeCreatedObject();
+        createObject.content = ' ';
+        const apiUrl = urlBuilder
+          .addSubdirectory('posts')
+          .addSubdirectory(post.id)
+          .addSubdirectory('comments')
+          .build();
+
+        const response = await request(app.getHttpServer())
+          .post(apiUrl)
+          .set(authHelper.makeAccessHeader(user.id))
+          .send(createObject);
+        const errors = response.body.errorsMessages;
+
+        expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
+        expect(errors.length).toBe(1);
+        commonTestHelper.checkErrors(errors);
+      });
     });
 
     // TODO подумать про тесты самих лайков
