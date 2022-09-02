@@ -11,7 +11,7 @@ export class HelperComment {
 
   bloggersRepository: IBloggersRepository;
 
-  userRepository: IUsersRepository;
+  usersRepository: IUsersRepository;
 
   commentsRepository: ICommentsRepository;
 
@@ -22,7 +22,7 @@ export class HelperComment {
     this.bloggersRepository = testingModule.get<IBloggersRepository>(
       RepositoryProviderKeys.bloggers,
     );
-    this.userRepository = testingModule.get<IUsersRepository>(
+    this.usersRepository = testingModule.get<IUsersRepository>(
       RepositoryProviderKeys.users,
     );
     this.commentsRepository = testingModule.get<ICommentsRepository>(
@@ -34,7 +34,7 @@ export class HelperComment {
     await this.commentsRepository.deleteAllComments();
     await this.postsRepository.deleteAllPosts();
     await this.bloggersRepository.deleteAllBloggers();
-    await this.userRepository.deleteAllUsers();
+    await this.usersRepository.deleteAllUsers();
   }
 
   public expectCommentSchema(comment: CommentResponseEntity) {

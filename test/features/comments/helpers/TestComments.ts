@@ -35,13 +35,14 @@ export class TestComments {
     this.commentsRepository = testingModule.get<ICommentsRepository>(
       RepositoryProviderKeys.comments,
     );
-    this.testUsersHelper = new TestUsers(this.usersRepository);
+    this.testUsersHelper = new TestUsers(testingModule);
     this.commonTestHelper = new CommonTestHelper();
     this.dates = this.commonTestHelper.generateDates();
   }
 
   async make() {
     const user = await this.testUsersHelper.make();
+    const user2 = await this.testUsersHelper.make();
     const { post } = await this.testPosts.make();
     const comment = await this.commentsRepository.createComment({
       content: this.generateContent(),
@@ -52,6 +53,7 @@ export class TestComments {
     return {
       comment,
       user,
+      user2,
     };
   }
 
@@ -89,6 +91,7 @@ export class TestComments {
     return {
       comment,
       user: user1,
+      user2: user2,
     };
   }
 
