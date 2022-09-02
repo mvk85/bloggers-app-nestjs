@@ -9,7 +9,6 @@ import {
   PostCreateFields,
   PostResponseEntity,
 } from 'src/feature/posts/types';
-import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
 import { CreatedUserResponse } from 'src/feature/users/types';
 import { RepositoryProviderKeys } from 'src/types';
 import { TestBloggers } from 'test/features/bloggers/helpers/TestBloggers';
@@ -21,8 +20,6 @@ export class TestPosts {
   postsRepository: IPostsRepository;
 
   bloggersRepository: IBloggersRepository;
-
-  usersRepository: IUsersRepository;
 
   testBloggers: TestBloggers;
 
@@ -41,12 +38,9 @@ export class TestPosts {
     this.bloggersRepository = testingModule.get<IBloggersRepository>(
       RepositoryProviderKeys.bloggers,
     );
-    this.usersRepository = testingModule.get<IUsersRepository>(
-      RepositoryProviderKeys.users,
-    );
 
     this.testBloggers = new TestBloggers(this.bloggersRepository);
-    this.testUsersHelper = new TestUsers(this.usersRepository);
+    this.testUsersHelper = new TestUsers(testingModule);
     this.commonTestHelper = new CommonTestHelper();
     this.authHelper = new AuthHelper(testingModule);
     this.dates = this.commonTestHelper.generateDates();
