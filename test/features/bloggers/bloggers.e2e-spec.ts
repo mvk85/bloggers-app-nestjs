@@ -40,9 +40,13 @@ describe('bloggers api', () => {
     commonTestHelper = new CommonTestHelper();
   });
 
-  beforeEach(async () => {
+  const clear = async () => {
     await helperBloggers.clear();
     urlBuilder.clear();
+  };
+
+  beforeEach(async () => {
+    await clear();
   });
 
   describe('/bloggers', () => {
@@ -233,5 +237,8 @@ describe('bloggers api', () => {
     // TODO add update, delete
   });
 
-  afterAll(() => app.close());
+  afterAll(async () => {
+    await clear();
+    app.close();
+  });
 });
