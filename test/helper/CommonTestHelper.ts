@@ -1,4 +1,5 @@
 import { addMinutes } from 'date-fns';
+import { v4 as uuidv4 } from 'uuid';
 
 export class CommonTestHelper {
   checkErrors(errors: any[]) {
@@ -32,5 +33,9 @@ export class CommonTestHelper {
       addMinutes(currentDate, -50),
       addMinutes(currentDate, -55),
     ];
+  }
+
+  generateRandomUuid() {
+    return uuidv4();
   }
 }
