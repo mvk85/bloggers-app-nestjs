@@ -1,10 +1,18 @@
 import { faker } from '@faker-js/faker';
+import { TestingModule } from '@nestjs/testing';
 import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
 import { UserCreateType } from 'src/feature/users/types';
+import { RepositoryProviderKeys } from 'src/types';
 import { generateHash } from 'src/utils';
 
 export class TestUsers {
-  constructor(private readonly usersRepository: IUsersRepository) {}
+  usersRepository: IUsersRepository;
+
+  constructor(testingModule: TestingModule) {
+    this.usersRepository = testingModule.get<IUsersRepository>(
+      RepositoryProviderKeys.users,
+    );
+  }
 
   public async make(pwd?: string) {
     const login = this.generateLogin();
