@@ -53,7 +53,7 @@ describe('posts api e2e tests', () => {
   });
 
   describe('posts api', () => {
-    describe('post', () => {
+    describe('/post', () => {
       it('should return posts without pagination params', async () => {
         const { post: post1 } = await createPosts.make();
         const { post: post2 } = await createPosts.make();
