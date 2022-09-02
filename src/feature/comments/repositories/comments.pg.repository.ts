@@ -125,14 +125,33 @@ export class CommentsPgRepository implements ICommentsRepository {
   }
 
   async deleteCommentById(id: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    const result = await this.dataSource.query(
+      `
+    delete from "Comments" cm 
+    where cm."id" = $1;
+    `,
+      [id],
+    );
+
+    return !!result[1];
   }
 
   async updateCommentById(
     id: string,
-    updateField: { content: string },
+    { content }: { content: string },
   ): Promise<boolean> {
-    throw new Error('Method not implemented.');
+    const result = await this.dataSource.query(
+      `
+      update "Comments" 
+      set 
+        content = $1
+      where
+        id = $2
+      `,
+      [content, id],
+    );
+
+    return !!result[1];
   }
 
   async deleteAllComments(): Promise<void> {
