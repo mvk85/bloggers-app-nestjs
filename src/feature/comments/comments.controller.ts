@@ -56,7 +56,7 @@ export class CommentsController {
 
   @Put(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, CommentCredentialsGuard)
   async updateById(
     @Param() params: CommentParamsValidatorModel,
     @Body() bodyFields: CommentValidatorModel,
