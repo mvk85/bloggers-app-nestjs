@@ -1,16 +1,13 @@
 import { BadRequestException, Inject } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { CommentDbEntity, LikeCommentDbType, LikeItemType } from 'src/db/types';
+import { LikeCommentDbType, LikeItemType } from 'src/db/types';
 import { CommentResponseType } from 'src/feature/posts/types';
 import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
 import { RepositoryProviderKeys } from 'src/types';
+import { newIsoDate } from 'src/utils';
 import { DataSource } from 'typeorm';
 import { CommentsMapper } from '../mappers/comments.mapper';
-import {
-  CommentCreateFields,
-  CommentResponseEntity,
-  FilterComments,
-} from '../types';
+import { CommentCreateFields, CommentResponseEntity } from '../types';
 import { ICommentsRepository } from './ICommentsRepository';
 
 export class CommentsPgRepository implements ICommentsRepository {
@@ -24,16 +21,55 @@ export class CommentsPgRepository implements ICommentsRepository {
     this.commentsMapper = new CommentsMapper();
   }
 
-  async getCountComments(filter: FilterComments): Promise<number> {
-    throw new Error('Method not implemented.');
+  async getCountComments(postId: string): Promise<number> {
+    const result = await this.dataSource.query(
+      `
+      select count(*) from "Comments" cm
+      where cm."postId" = $1
+      `,
+      [postId],
+    );
+    return Number(result[0].count);
   }
 
   async getComments(
-    filter: FilterComments,
+    postId: string,
     skip: number,
     limit: number,
-  ): Promise<CommentDbEntity[]> {
-    throw new Error('Method not implemented.');
+    userId?: string,
+  ): Promise<CommentResponseType[]> {
+    const result = await this.dataSource.query(
+      `
+      select
+      c.id,
+      c.content,
+      c."addedAt",
+      c."userId",
+      (
+        select login 
+        from "Users" us
+        where us.id = c."userId"
+      ) as "userLogin",
+      sum (case when cl."likeStatus" = 'Like' then 1 else 0 end) as "likesCount",
+      sum (case when cl."likeStatus" = 'Dislike' then 1 else 0 end) as "dislikesCount",
+      (
+        select "likeStatus"
+        from "CommentLikes" cl2
+        where cl2."commentId" = c.id and cl2."userId" = $4 
+      ) as "myStatus"
+    from "Comments" c
+    left join "Users" u on c."userId" = u.id
+    left join "CommentLikes" cl ON cl."commentId" = c.id 
+    where c."postId" = $1
+    group by c.id, u.id
+    order by c."addedAt"
+    limit $3
+    offset $2;
+    `,
+      [postId, skip, limit, userId],
+    );
+
+    return result.map((comment) => this.commentsMapper.mapComment(comment));
   }
 
   async createComment({
@@ -42,7 +78,7 @@ export class CommentsPgRepository implements ICommentsRepository {
     postId,
   }: CommentCreateFields): Promise<CommentResponseEntity> {
     try {
-      const addedAt = new Date();
+      const addedAt = newIsoDate();
       const result = await this.dataSource.query(
         `
       insert into "Comments" 

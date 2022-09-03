@@ -387,7 +387,6 @@ export class PostsPgRepository implements IPostsRepository {
     return !!result[1];
   }
 
-  // TODO подумать как это сделать для лайков delete from "PostLikes" лучше с учетом монги;
   async deleteAllPosts(): Promise<void> {
     await this.dataSource.query(
       `

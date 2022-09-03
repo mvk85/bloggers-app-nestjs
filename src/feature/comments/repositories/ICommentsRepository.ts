@@ -1,20 +1,19 @@
-import { CommentDbEntity } from 'src/db/types';
 import { CommentResponseType } from 'src/feature/posts/types';
 import {
   CommentCreateFields,
   CommentResponseEntity,
-  FilterComments,
   LikeCommentFieldType,
 } from '../types';
 
 export interface ICommentsRepository {
-  getCountComments(filter: FilterComments): Promise<number>;
+  getCountComments(postId: string): Promise<number>;
 
   getComments(
-    filter: FilterComments,
+    postId: string,
     skip: number,
     limit: number,
-  ): Promise<CommentDbEntity[]>;
+    userId?: string,
+  ): Promise<CommentResponseType[]>;
 
   createComment(
     newComment: CommentCreateFields,

@@ -3,7 +3,6 @@ import { PaginationParams, RepositoryProviderKeys } from 'src/types';
 import { generatePaginationData } from 'src/utils';
 import { ICommentsRepository } from '../comments/repositories/ICommentsRepository';
 import { CommentCreateFields, CommentResponseEntity } from '../comments/types';
-import { CommentsLikesMapper } from './mappers/likes-comment.mapper';
 import { CommentsByPostIdResponseType } from './types';
 
 @Injectable()
@@ -11,7 +10,6 @@ export class CommentsByPostService {
   constructor(
     @Inject(RepositoryProviderKeys.comments)
     private readonly commentsRepository: ICommentsRepository,
-    private readonly commentsLikesMapper: CommentsLikesMapper,
   ) {}
 
   async createComment(
@@ -29,23 +27,23 @@ export class CommentsByPostService {
     paginationParams: PaginationParams,
     userId?: string,
   ): Promise<CommentsByPostIdResponseType> {
-    const commentsCount = await this.commentsRepository.getCountComments({
+    const commentsCount = await this.commentsRepository.getCountComments(
       postId,
-    });
+    );
     const paginationData = generatePaginationData(
       paginationParams,
       commentsCount,
     );
-    const filter = { postId };
 
     const comments = await this.commentsRepository.getComments(
-      filter,
+      postId,
       paginationData.skip,
       paginationData.pageSize,
+      userId,
     );
 
     return {
-      items: this.commentsLikesMapper.normalizeCommentsLikes(comments, userId),
+      items: comments,
       pagesCount: paginationData.pagesCount,
       pageSize: paginationData.pageSize,
       totalCount: commentsCount,

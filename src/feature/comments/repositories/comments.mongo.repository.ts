@@ -26,24 +26,27 @@ export class CommentsMongoRepository implements ICommentsRepository {
     private readonly commentsLikesMapper: CommentsLikesMapper,
   ) {}
 
-  async getCountComments(filter: FilterComments): Promise<number> {
+  async getCountComments(postId: string): Promise<number> {
+    const filter: FilterComments = { postId };
     const count = await this.commentsModel.count(filter);
 
     return count;
   }
 
   async getComments(
-    filter: FilterComments,
+    postId: string,
     skip: number,
     limit: number,
-  ): Promise<CommentDbEntity[]> {
+    userId?: string,
+  ): Promise<CommentResponseType[]> {
+    const filter: FilterComments = { postId };
     const comments = await this.commentsModel
       .find(filter, commentsProjection)
       .skip(skip)
       .limit(limit)
       .lean();
 
-    return comments;
+    return this.commentsLikesMapper.normalizeCommentsLikes(comments, userId);
   }
 
   async createComment(commentFields: CommentCreateFields) {

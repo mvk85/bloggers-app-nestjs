@@ -143,7 +143,7 @@ export class PostsController {
   @UseGuards(InjectUserIdFromJwt)
   async getCommentsByPostId(
     @Param() postParams: PostIdParamValidatorModel,
-    @GetUserIdFromJwt() userId: string,
+    // @GetUserIdFromJwt() userId: string,
     @Query('PageNumber') pageNumber?: string,
     @Query('PageSize') pageSize?: string,
   ) {
