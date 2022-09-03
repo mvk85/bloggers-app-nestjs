@@ -62,7 +62,7 @@ describe('posts api e2e tests', () => {
         });
         const items = [post1, post2, post3];
 
-        const responseBody = {
+        const expectedResponseBody = {
           items,
           pagesCount: 1,
           pageSize: DEFAULT_PAGE_SIZE,
@@ -74,7 +74,7 @@ describe('posts api e2e tests', () => {
         const response = await request(app.getHttpServer()).get(apiUrl);
 
         expect(response.status).toEqual(HttpStatus.OK);
-        expect(response.body).toEqual(responseBody);
+        expect(response.body).toEqual(expectedResponseBody);
         helperPosts.expectPostSchema(response.body.items[0]);
         helperPosts.expectPostSchema(response.body.items[1]);
         helperPosts.expectPostSchema(response.body.items[2]);
@@ -178,11 +178,9 @@ describe('posts api e2e tests', () => {
 
         expect(response.status).toEqual(HttpStatus.NOT_FOUND);
       });
-
-      // TODO must create the negative tests! (errors, didn't find, etc)
     });
 
-    describe('/post/:id/comments', () => {
+    describe('/post/:id/comments POST', () => {
       it('Should create comment by postId when fields is correct', async () => {
         const { createObject, post, user } =
           await testComments.makeCreatedObject();
@@ -257,7 +255,43 @@ describe('posts api e2e tests', () => {
       });
     });
 
-    // TODO подумать про тесты самих лайков
+    describe('/post/:id/comments GET', () => {
+      it('Should return list of comments by postId without pagination params', async () => {
+        const { comment, post } = await testComments.make();
+        await testComments.make(); // make comment with another postId
+        const apiUrl = urlBuilder
+          .addSubdirectory('posts')
+          .addSubdirectory(post.id)
+          .addSubdirectory('comments')
+          .build();
+        const items = [comment];
+        const expectedResponseBody = {
+          items,
+          pagesCount: 1,
+          pageSize: DEFAULT_PAGE_SIZE,
+          totalCount: items.length,
+          page: DEFAULT_PAGE_NUMBER,
+        };
+
+        const response = await request(app.getHttpServer()).get(apiUrl);
+
+        expect(response.status).toEqual(HttpStatus.OK);
+        expect(response.body).toEqual(expectedResponseBody);
+        helperComment.expectCommentSchema(response.body.items[0]);
+      });
+
+      it('Should return 404 for list of comments when postId dont exist', async () => {
+        const apiUrl = urlBuilder
+          .addSubdirectory('posts')
+          .addSubdirectory(commonTestHelper.generateRandomUuid())
+          .addSubdirectory('comments')
+          .build();
+
+        const response = await request(app.getHttpServer()).get(apiUrl);
+
+        expect(response.status).toEqual(HttpStatus.NOT_FOUND);
+      });
+    });
   });
 
   afterAll(async () => {

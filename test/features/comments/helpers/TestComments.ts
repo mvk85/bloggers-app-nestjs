@@ -54,6 +54,7 @@ export class TestComments {
       comment,
       user,
       user2,
+      post,
     };
   }
 
