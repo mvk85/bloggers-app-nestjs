@@ -177,7 +177,7 @@ describe('comments api e2e tests', () => {
         expect(responseReceiving.body.content).toEqual(newCommentContent);
         helperComment.expectCommentSchema(responseReceiving.body);
       });
-      it('Should return 403 when comment is deleting and user is not owner', async () => {
+      it('Should return 403 when comment is updating and user is not owner', async () => {
         const { comment, user2 } = await testComments.makeWithLike();
         const newCommentContent = testComments.generateContent();
         const apiUrl = urlBuilder
