@@ -3,6 +3,5 @@ export enum MongooseModelNamed {
   UsersMongooseModel = 'UsersMongooseModel',
   PostsMongooseModel = 'PostsMongooseModel',
   CommentsMongooseModel = 'CommentsMongooseModel',
-  RequestsMongooseModel = 'RequestsMongooseModel',
   BadRefreshTokensMongooseModel = 'BadRefreshTokensMongooseModel',
 }

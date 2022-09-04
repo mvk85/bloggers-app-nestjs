@@ -5,7 +5,6 @@ import {
   BloggersModel,
   CommentsModel,
   PostsModel,
-  RequestsModel,
   UsersModel,
 } from './models.mongoose';
 import { DbRunner } from './db-runner';
@@ -26,10 +25,6 @@ const mongooseModelProviders = [
   {
     provide: MongooseModelNamed.CommentsMongooseModel,
     useValue: CommentsModel,
-  },
-  {
-    provide: MongooseModelNamed.RequestsMongooseModel,
-    useValue: RequestsModel,
   },
   {
     provide: MongooseModelNamed.BadRefreshTokensMongooseModel,

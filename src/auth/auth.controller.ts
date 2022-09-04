@@ -14,7 +14,6 @@ import {
 import { Request, Response } from 'express';
 import { CurrentUserIdFromJwt } from 'src/decorators/current-user-id.decorator';
 import { AuthService } from './auth.service';
-import { IpCheckerGuard } from './guards/ip-checker.guard';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
@@ -22,6 +21,7 @@ import { UserSignInValidatorModel } from './dto/user-login.validator';
 import { UserValidatorModel } from './dto/user.validator';
 import { AppSettingConfig } from 'src/config/app-setting.config';
 import { AppConfigProvidersKey } from 'src/config/types';
+import { ThrottlerProxyGuard } from 'src/guards/trottle.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -36,7 +36,7 @@ export class AuthController {
   }
 
   @Post('login')
-  @UseGuards(IpCheckerGuard, LocalAuthGuard)
+  @UseGuards(LocalAuthGuard, ThrottlerProxyGuard)
   @HttpCode(HttpStatus.OK)
   async login(
     @Body() requestBody: UserSignInValidatorModel,
@@ -68,7 +68,7 @@ export class AuthController {
 
   @Post('registration')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(IpCheckerGuard)
+  @UseGuards(ThrottlerProxyGuard)
   async registration(@Body() bodyRequest: UserValidatorModel) {
     const isRegistrated = await this.authService.registration(bodyRequest);
 
@@ -81,7 +81,7 @@ export class AuthController {
 
   @Post('registration-confirmation')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(IpCheckerGuard)
+  @UseGuards(ThrottlerProxyGuard)
   async registrationConfirmation(@Body('code') confirmationCode: string) {
     const isConfirmed = await this.authService.registrationConfirmation(
       confirmationCode,
@@ -96,7 +96,7 @@ export class AuthController {
 
   @Post('registration-email-resending')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseGuards(IpCheckerGuard)
+  @UseGuards(ThrottlerProxyGuard)
   async registrationEmailResending(@Body('email') email: string) {
     const isSendedNewCode = await this.authService.registrationEmailResending(
       email,

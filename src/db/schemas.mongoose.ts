@@ -69,12 +69,6 @@ export const commentsSchema = new mongoose.Schema<CommentDbEntity>({
   },
 });
 
-export const requestsSchema = new mongoose.Schema<BruteForceItem>({
-  ip: { type: String, required: true },
-  date: { type: Number, required: true },
-  endpoint: { type: String, required: true },
-});
-
 export const badRefreshTokensSchema =
   new mongoose.Schema<BadRefreshTokenEntityType>({
     userId: { type: String, required: true },
