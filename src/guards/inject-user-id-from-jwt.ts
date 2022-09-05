@@ -21,24 +21,6 @@ export class InjectUserIdFromJwt implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: Request = context.switchToHttp().getRequest();
 
-    // const token = req.cookies && req.cookies.refreshToken;
-
-    // if (!token) {
-    //   return true;
-    // }
-
-    // const userId = await this.jwtUtility.getUserIdByToken(token, true);
-
-    // if (!userId) {
-    //   return true;
-    // }
-
-    // const user = await this.usersRepository.findUserByUserId(userId);
-
-    // if (!user) {
-    //   return true;
-    // }
-
     if (!req.headers.authorization) {
       return true;
     }

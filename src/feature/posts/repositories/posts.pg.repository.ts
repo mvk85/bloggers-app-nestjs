@@ -86,8 +86,8 @@ export class PostsPgRepository implements IPostsRepository {
   async getCountPosts(bloggerId?: string): Promise<number> {
     const result = await this.dataSource.query(
       `
-      select count(*) from "Posts"
-      ${bloggerId ? `where id = $1` : ''}
+      select count(*) from "Posts" p
+      ${bloggerId ? `where p."bloggerId" = $1` : ''}
       `,
       bloggerId ? [bloggerId] : [],
     );
