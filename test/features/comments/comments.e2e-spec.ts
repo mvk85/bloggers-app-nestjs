@@ -72,7 +72,6 @@ describe('comments api e2e tests', () => {
 
       it('should return comment by id when user authorized', async () => {
         const { comment, user } = await testComments.makeWithLike();
-        const refreshCookie = authHelper.makeRefreshCookie(user.id);
         const apiUrl = urlBuilder
           .addSubdirectory('comments')
           .addSubdirectory(comment.id)
@@ -80,7 +79,7 @@ describe('comments api e2e tests', () => {
 
         const response = await request(app.getHttpServer())
           .get(apiUrl)
-          .set('Cookie', [refreshCookie]);
+          .set(authHelper.makeAccessHeader(user.id));
 
         expect(response.status).toEqual(HttpStatus.OK);
         expect(response.body.id).toEqual(comment.id);
@@ -229,7 +228,6 @@ describe('comments api e2e tests', () => {
           .addSubdirectory('comments')
           .addSubdirectory(comment.id)
           .build();
-        const refreshCookie = authHelper.makeRefreshCookie(user2.id);
 
         const responseLike = await request(app.getHttpServer())
           .put(apiLikeUrl)
@@ -240,7 +238,7 @@ describe('comments api e2e tests', () => {
 
         const responseGetComment = await request(app.getHttpServer())
           .get(apiGetUrl)
-          .set('Cookie', [refreshCookie]);
+          .set(authHelper.makeAccessHeader(user2.id));
 
         expect(responseLike.status).toEqual(HttpStatus.NO_CONTENT);
         expect(responseGetComment.status).toEqual(HttpStatus.OK);

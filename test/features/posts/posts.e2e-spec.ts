@@ -151,7 +151,6 @@ describe('posts api e2e tests', () => {
       it('should return post by id when post exist and was set jwt (with likes)', async () => {
         // arrange
         const { post, user } = await createPosts.makeWithLikes();
-        const refreshCookie = authHelper.makeRefreshCookie(user.id);
         const apiUrl = urlBuilder
           .addSubdirectory('posts')
           .addSubdirectory(post.id)
@@ -160,7 +159,7 @@ describe('posts api e2e tests', () => {
         // act
         const response = await request(app.getHttpServer())
           .get(apiUrl)
-          .set('Cookie', [refreshCookie])
+          .set(authHelper.makeAccessHeader(user.id))
           .send();
 
         // assert
