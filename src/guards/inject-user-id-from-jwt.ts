@@ -3,6 +3,7 @@ import {
   CanActivate,
   ExecutionContext,
   Inject,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtUtility } from 'src/auth/jwt-utility';
@@ -19,22 +20,41 @@ export class InjectUserIdFromJwt implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: Request = context.switchToHttp().getRequest();
-    const token = req.cookies && req.cookies.refreshToken;
 
-    if (!token) {
-      return true;
+    // const token = req.cookies && req.cookies.refreshToken;
+
+    // if (!token) {
+    //   return true;
+    // }
+
+    // const userId = await this.jwtUtility.getUserIdByToken(token, true);
+
+    // if (!userId) {
+    //   return true;
+    // }
+
+    // const user = await this.usersRepository.findUserByUserId(userId);
+
+    // if (!user) {
+    //   return true;
+    // }
+
+    if (!req.headers.authorization) {
+      throw new UnauthorizedException();
     }
 
-    const userId = await this.jwtUtility.getUserIdByToken(token, true);
+    const token = req.headers.authorization.split(' ')[1];
+
+    const userId = await this.jwtUtility.getUserIdByToken(token);
 
     if (!userId) {
-      return true;
+      throw new UnauthorizedException();
     }
 
     const user = await this.usersRepository.findUserByUserId(userId);
 
     if (!user) {
-      return true;
+      throw new UnauthorizedException();
     }
 
     req.user = { userId: user.id };
