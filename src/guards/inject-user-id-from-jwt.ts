@@ -40,7 +40,7 @@ export class InjectUserIdFromJwt implements CanActivate {
     // }
 
     if (!req.headers.authorization) {
-      throw new UnauthorizedException();
+      return true;
     }
 
     const token = req.headers.authorization.split(' ')[1];
@@ -48,13 +48,13 @@ export class InjectUserIdFromJwt implements CanActivate {
     const userId = await this.jwtUtility.getUserIdByToken(token);
 
     if (!userId) {
-      throw new UnauthorizedException();
+      return true;
     }
 
     const user = await this.usersRepository.findUserByUserId(userId);
 
     if (!user) {
-      throw new UnauthorizedException();
+      return true;
     }
 
     req.user = { userId: user.id };
