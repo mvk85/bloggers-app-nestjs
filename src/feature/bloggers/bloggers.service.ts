@@ -11,6 +11,7 @@ import {
   BloggerEntity,
   FilterBloggersParams,
   ResponsePostsByBloggerId,
+  UpdateBloggerObject,
 } from './types';
 
 @Injectable()
@@ -100,10 +101,7 @@ export class BloggersService {
     return isDeleted;
   }
 
-  async updateBloggerById(
-    id: string,
-    data: { name: string; youtubeUrl: string },
-  ) {
+  async updateBloggerById(id: string, data: UpdateBloggerObject) {
     const isUpdated = await this.bloggersRepository.updateBloggerById(id, data);
 
     return isUpdated;

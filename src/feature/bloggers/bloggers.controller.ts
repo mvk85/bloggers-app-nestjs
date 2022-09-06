@@ -134,8 +134,7 @@ export class BloggersController {
   @UseGuards(BasicAuthGuard)
   async createPost(
     @Param() params: BloggerParamsValidatorModel,
-    @Body()
-    requestBody: PostValidatorModel,
+    @Body() requestBody: PostValidatorModel,
   ) {
     const bodyFields = {
       title: requestBody.title,

@@ -21,3 +21,5 @@ export class BloggerEntity {
     public youtubeUrl: string,
   ) {}
 }
+
+export type UpdateBloggerObject = { name: string; youtubeUrl: string };

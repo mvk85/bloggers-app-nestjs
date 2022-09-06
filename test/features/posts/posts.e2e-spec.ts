@@ -18,7 +18,7 @@ jest.setTimeout(1000 * 100);
 describe('posts api e2e tests', () => {
   let app: INestApplication;
   let urlBuilder: UrlBuilder;
-  let createPosts: TestPosts;
+  let testPosts: TestPosts;
   let helperPosts: HelperPosts;
   let authHelper: AuthHelper;
   let testComments: TestComments;
@@ -35,7 +35,7 @@ describe('posts api e2e tests', () => {
     await app.init();
 
     urlBuilder = new UrlBuilder();
-    createPosts = new TestPosts(testingModule);
+    testPosts = new TestPosts(testingModule);
     helperPosts = new HelperPosts(testingModule);
     authHelper = new AuthHelper(testingModule);
     testComments = new TestComments(testingModule);
@@ -55,9 +55,9 @@ describe('posts api e2e tests', () => {
   describe('posts api', () => {
     describe('/post', () => {
       it('should return posts without pagination params', async () => {
-        const { post: post1 } = await createPosts.make();
-        const { post: post2 } = await createPosts.make();
-        const { post: post3 } = await createPosts.makeWithLikes({
+        const { post: post1 } = await testPosts.make();
+        const { post: post2 } = await testPosts.make();
+        const { post: post3 } = await testPosts.makeWithLikes({
           notAuth: true,
         });
         const items = [post1, post2, post3];
@@ -81,7 +81,7 @@ describe('posts api e2e tests', () => {
       });
 
       it('Should create new post when the data is correct', async () => {
-        const postCreateFields = await createPosts.makeCreatedObject();
+        const postCreateFields = await testPosts.makeCreatedObject();
         const apiUrl = urlBuilder.addSubdirectory('posts').build();
 
         const response = await request(app.getHttpServer())
@@ -101,7 +101,7 @@ describe('posts api e2e tests', () => {
 
       // TODO узнать, хорошая ли практика так делать тест!
       it('Should return post after created when the data is correct', async () => {
-        const postCreateFields = await createPosts.makeCreatedObject();
+        const postCreateFields = await testPosts.makeCreatedObject();
         const apiUrlCreated = urlBuilder.addSubdirectory('posts').build();
 
         const responsePostCreated = await request(app.getHttpServer())
@@ -136,7 +136,7 @@ describe('posts api e2e tests', () => {
     });
     describe('/post/:id', () => {
       it('should return post by id when post exist (without likes)', async () => {
-        const { post } = await createPosts.make();
+        const { post } = await testPosts.make();
         const apiUrl = urlBuilder
           .addSubdirectory('posts')
           .addSubdirectory(post.id)
@@ -150,7 +150,7 @@ describe('posts api e2e tests', () => {
 
       it('should return post by id when post exist and was set jwt (with likes)', async () => {
         // arrange
-        const { post, user } = await createPosts.makeWithLikes();
+        const { post, user } = await testPosts.makeWithLikes();
         const apiUrl = urlBuilder
           .addSubdirectory('posts')
           .addSubdirectory(post.id)
