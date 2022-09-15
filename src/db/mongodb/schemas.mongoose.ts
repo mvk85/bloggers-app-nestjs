@@ -6,7 +6,7 @@ import {
   PostDbEntity,
   BadRefreshTokenEntityType,
   UserDbEntity,
-} from './types';
+} from '../types';
 
 export const bloggersSchema = new mongoose.Schema<BloggerDbEntity>({
   id: { type: String, required: true },

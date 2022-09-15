@@ -5,7 +5,7 @@ import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { AppConfigService } from './config/app-config.service';
 import { configEnvKeys } from './config/consts';
-import { DbRunner } from './db/db-runner';
+import { MongodbRunner } from './db/mongodb/mongodb-runner';
 import { ErrorExceptionFilter } from './exception-filters/error-exception.filter';
 import { HttpExceptionFilter } from './exception-filters/http-exception.filter';
 import { validationPipeOption } from './pipes/validation-pipe.options';
@@ -20,7 +20,7 @@ export function configurationApp(app: INestApplication) {
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const dbRunner = app.get(DbRunner);
+  const dbRunner = app.get(MongodbRunner);
 
   await dbRunner.runDb();
 

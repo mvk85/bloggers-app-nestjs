@@ -19,7 +19,7 @@ import { LocalAuthGuard } from './guards/local-auth.guard';
 import { RefreshTokenGuard } from './guards/refresh-token.guard';
 import { UserSignInValidatorModel } from './dto/user-login.validator';
 import { UserValidatorModel } from './dto/user.validator';
-import { AppSettingConfig } from 'src/config/app-setting.config';
+import { AppSettingConfig } from 'src/config/configs/app-setting.config';
 import { AppConfigProvidersKey } from 'src/config/types';
 import { ThrottlerProxyGuard } from 'src/guards/trottle.guard';
 

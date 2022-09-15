@@ -111,5 +111,40 @@ export class AppConfigService {
     if (key === configEnvKeys.dbType) {
       return this.configService.get<string>(configEnvKeys.dbType, 'mongodb');
     }
+
+    if (key === configEnvKeys.portToPostgres) {
+      return this.configService.get<string>(
+        configEnvKeys.portToPostgres,
+        '5432',
+      );
+    }
+
+    if (key === configEnvKeys.hostToPostgres) {
+      return this.configService.get<string>(
+        configEnvKeys.hostToPostgres,
+        'localhost',
+      );
+    }
+
+    if (key === configEnvKeys.nameDbToPostgres) {
+      return this.configService.get<string>(
+        configEnvKeys.nameDbToPostgres,
+        'social',
+      );
+    }
+
+    if (key === configEnvKeys.passwordToPostgres) {
+      return this.configService.get<string>(
+        configEnvKeys.passwordToPostgres,
+        '111',
+      );
+    }
+
+    if (key === configEnvKeys.usernameToPostgres) {
+      return this.configService.get<string>(
+        configEnvKeys.usernameToPostgres,
+        'postgres',
+      );
+    }
   }
 }

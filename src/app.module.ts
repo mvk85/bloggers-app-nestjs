@@ -2,24 +2,28 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { AppConfigService } from './config/app-config.service';
 import AppConfigModule from './config/config.module';
-import { connectPostgresFactory } from './db/connect-factory.postgres';
-import { DbModule } from './db/db.module';
+import { MongoDbModule } from './db/mongodb/mongodb.module';
 import { FeatureModule } from './feature/feature.module';
 import { TestingAppModule } from './testing/testing.module';
+import { AppConfigProvidersKey } from './config/types';
+import { connectPostgresFactory } from './db/typeorm/connect-factory.postgres';
 
 @Module({
   imports: [
     ConfigModule.forRoot(), // was added for included .env
     AppConfigModule,
-    DbModule,
+    MongoDbModule,
     AuthModule,
     FeatureModule,
     TestingAppModule,
     TypeOrmModule.forRootAsync({
       useFactory: connectPostgresFactory,
-      inject: [AppConfigService],
+      inject: [
+        AppConfigProvidersKey.dbTypeSetting,
+        AppConfigProvidersKey.sqlSetting,
+        AppConfigProvidersKey.typeormSetting,
+      ],
     }),
   ],
 })

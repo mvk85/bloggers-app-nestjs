@@ -7,7 +7,7 @@ import {
   PostsModel,
   UsersModel,
 } from './models.mongoose';
-import { DbRunner } from './db-runner';
+import { MongodbRunner } from './mongodb-runner';
 
 const mongooseModelProviders = [
   {
@@ -34,7 +34,7 @@ const mongooseModelProviders = [
 
 @Global()
 @Module({
-  providers: [...mongooseModelProviders, DbRunner],
-  exports: [...mongooseModelProviders, DbRunner],
+  providers: [...mongooseModelProviders, MongodbRunner],
+  exports: [...mongooseModelProviders, MongodbRunner],
 })
-export class DbModule {}
+export class MongoDbModule {}

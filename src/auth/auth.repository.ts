@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { MongooseModelNamed } from 'src/db/const';
-import { BadRefreshTokensModel } from 'src/db/models.mongoose';
+import { MongooseModelNamed } from 'src/db/mongodb/const';
+import { BadRefreshTokensModel } from 'src/db/mongodb/models.mongoose';
 
 @Injectable()
 export class AuthRepository {

@@ -6,4 +6,7 @@ export interface IEmailAdapterSettings {
 export enum AppConfigProvidersKey {
   emailAdapterSettings = 'EmailAdapterSettings',
   appConfigSetting = 'appConfigSetting',
+  typeormSetting = 'TypeOrmSettingConfig',
+  sqlSetting = 'SqlSettingConfig',
+  dbTypeSetting = 'dbTypeSetting',
 }

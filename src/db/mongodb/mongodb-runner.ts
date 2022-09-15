@@ -4,7 +4,7 @@ import { AppConfigService } from 'src/config/app-config.service';
 import { configEnvKeys } from 'src/config/consts';
 
 @Injectable()
-export class DbRunner {
+export class MongodbRunner {
   private mongoUri: string;
 
   private dbName: string;

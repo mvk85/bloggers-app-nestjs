@@ -18,4 +18,9 @@ export enum configEnvKeys {
   passwordPostgres = 'passwordPostgres',
   usernamePostgres = 'usernamePostgres',
   dbType = 'dbType',
+  portToPostgres = 'portToPostgres',
+  hostToPostgres = 'hostToPostgres',
+  nameDbToPostgres = 'nameDbToPostgres',
+  passwordToPostgres = 'passwordToPostgres',
+  usernameToPostgres = 'usernameToPostgres',
 }

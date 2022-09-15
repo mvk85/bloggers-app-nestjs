@@ -22,3 +22,9 @@ export enum RepositoryProviderKeys {
   comments = 'commentsRepositoryProvider',
   users = 'usersRepositoryProvider',
 }
+
+export enum DbType {
+  Sql = 'sql',
+  Typeorm = 'typeorm',
+  Mongo = 'mongo',
+}

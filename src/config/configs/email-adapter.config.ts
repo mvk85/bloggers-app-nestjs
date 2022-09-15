@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { AppConfigService } from './app-config.service';
-import { configEnvKeys } from './consts';
-import { IEmailAdapterSettings } from './types';
+import { AppConfigService } from '../app-config.service';
+import { configEnvKeys } from '../consts';
+import { IEmailAdapterSettings } from '../types';
 
 @Injectable()
 export class EmailAdapterSettings implements IEmailAdapterSettings {
