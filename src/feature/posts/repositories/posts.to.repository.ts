@@ -4,7 +4,7 @@ import { Bloggers } from 'src/db/typeorm/entity/Bloggers';
 import { PostLikes } from 'src/db/typeorm/entity/PostLikes';
 import { Posts } from 'src/db/typeorm/entity/Posts';
 import { Users } from 'src/db/typeorm/entity/Users';
-import { LikesStatus } from 'src/db/types';
+import { LikeItemType, LikesStatus } from 'src/db/types';
 import { IBloggersRepository } from 'src/feature/bloggers/repositories/IBloggersRepository';
 import { RepositoryProviderKeys } from 'src/types';
 import { Repository } from 'typeorm';
@@ -67,11 +67,12 @@ export class PostsToRepository implements IPostsRepository {
       .addSelect('bl.id', 'bloggerId')
       .addSelect('bl.name', 'bloggerName')
       .addSelect(
-        'sum (case when pl."likeStatus" = \'Like\' then 1 else 0 end)',
+        `sum (case when pl."likeStatus" = '${LikeItemType.Like}' then 1 else 0 end)`,
         'likesCount',
       )
       .addSelect(
-        'sum (case when pl."likeStatus" = \'Dislike\' then 1 else 0 end) as "dislikesCount"',
+        `sum (case when pl."likeStatus" = '${LikeItemType.Dislike}' then 1 else 0 end)`,
+        'dislikesCount',
       )
       .addSelect((subQuery) => {
         return subQuery
