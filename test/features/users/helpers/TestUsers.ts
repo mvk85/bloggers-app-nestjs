@@ -33,12 +33,20 @@ export class TestUsers {
     return createdUser;
   }
 
+  public makeCreatedObject() {
+    return {
+      login: this.generateLogin(),
+      password: this.generatePassword(),
+      email: this.generateEmail(),
+    };
+  }
+
   public generatePassword() {
     return faker.internet.password();
   }
 
   public generateLogin() {
-    return `${faker.name.firstName()}_${faker.name.middleName()}`;
+    return `login-${faker.lorem.word(3)}`;
   }
 
   public generateEmail() {

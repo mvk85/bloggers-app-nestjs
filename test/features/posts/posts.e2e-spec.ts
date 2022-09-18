@@ -53,6 +53,11 @@ describe('posts api e2e tests', () => {
     urlBuilder.clear();
   };
 
+  afterAll(async () => {
+    await clear();
+    app.close();
+  });
+
   describe('posts api', () => {
     describe('/post GET', () => {
       beforeEach(async () => {
@@ -561,10 +566,5 @@ describe('posts api e2e tests', () => {
         ).toBe(0);
       });
     });
-  });
-
-  afterAll(async () => {
-    await clear();
-    app.close();
   });
 });

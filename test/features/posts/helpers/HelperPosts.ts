@@ -31,10 +31,10 @@ export class HelperPosts {
   }
 
   public async clear() {
-    await this.commentsRepository.deleteAllComments();
-    await this.postsRepository.deleteAllPosts();
-    await this.bloggersRepository.deleteAllBloggers();
     await this.userRepository.deleteAllUsers();
+    await this.bloggersRepository.deleteAllBloggers();
+    await this.postsRepository.deleteAllPosts();
+    await this.commentsRepository.deleteAllComments();
   }
 
   public expectPostSchema(post: PostResponseEntity) {
