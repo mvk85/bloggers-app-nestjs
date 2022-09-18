@@ -47,8 +47,13 @@ describe('comments api e2e tests', () => {
   beforeEach(async () => {
     await clear();
   });
+
+  afterAll(async () => {
+    await clear();
+    app.close();
+  });
   describe('comments api', () => {
-    describe('/comments/:id', () => {
+    describe('/comments/:id GET', () => {
       it('should return comment by id when user unauthorized', async () => {
         const { comment } = await testComments.make();
         const apiUrl = urlBuilder
@@ -104,7 +109,9 @@ describe('comments api e2e tests', () => {
 
         expect(response.status).toEqual(HttpStatus.BAD_REQUEST);
       });
+    });
 
+    describe('/comments/:id DELETE', () => {
       it('Should delete comment by id when user is owner', async () => {
         const { comment, user } = await testComments.make();
         const apiUrl = urlBuilder
@@ -151,7 +158,9 @@ describe('comments api e2e tests', () => {
 
         expect(responseDeleting.status).toEqual(HttpStatus.UNAUTHORIZED);
       });
+    });
 
+    describe('/comments/:id PUT', () => {
       it('Should update comment when user is owner', async () => {
         const { comment, user } = await testComments.makeWithLike();
         const newCommentContent = testComments.generateContent();
@@ -176,6 +185,7 @@ describe('comments api e2e tests', () => {
         expect(responseReceiving.body.content).toEqual(newCommentContent);
         helperComment.expectCommentSchema(responseReceiving.body);
       });
+
       it('Should return 403 when comment is updating and user is not owner', async () => {
         const { comment, user2 } = await testComments.makeWithLike();
         const newCommentContent = testComments.generateContent();
@@ -214,7 +224,7 @@ describe('comments api e2e tests', () => {
       });
     });
 
-    describe(':id/like-status', () => {
+    describe('/comments/:id/like-status PUT', () => {
       it('Should add like to comment when user is authorized', async () => {
         const likeStatus = LikesStatus.Like;
         const { comment, user2 } = await testComments.make();
@@ -304,10 +314,5 @@ describe('comments api e2e tests', () => {
         expect(responseLike.status).toEqual(HttpStatus.NOT_FOUND);
       });
     });
-  });
-
-  afterAll(async () => {
-    await clear();
-    app.close();
   });
 });

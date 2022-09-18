@@ -355,7 +355,7 @@ describe('posts api e2e tests', () => {
         const { createObject, user } = await testComments.makeCreatedObject();
         const apiUrl = urlBuilder
           .addSubdirectory('posts')
-          .addSubdirectory(BAD_IDENTITY)
+          .addSubdirectory(commonTestHelper.generateRandomUuid())
           .addSubdirectory('comments')
           .build();
 
