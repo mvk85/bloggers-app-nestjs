@@ -41,9 +41,14 @@ export class PostsService {
     postId: string,
     userId?: string,
   ): Promise<PostResponseEntity | null> {
-    const post = await this.postsRepository.getPostById(postId, userId);
+    try {
+      const post = await this.postsRepository.getPostById(postId, userId);
 
-    return post;
+      return post;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
   }
 
   async deletePostById(id: string) {

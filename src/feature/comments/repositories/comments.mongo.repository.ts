@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { commentsProjection, removeObjectIdOption } from 'src/const';
-import { MongooseModelNamed } from 'src/db/const';
-import { CommentsModel } from 'src/db/models.mongoose';
+import { MongooseModelNamed } from 'src/db/mongodb/const';
+import { CommentsModel } from 'src/db/mongodb/models.mongoose';
 import {
   CommentCreateFields,
   FilterComments,

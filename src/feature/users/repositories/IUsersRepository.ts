@@ -1,5 +1,5 @@
 import { UserDbEntity } from 'src/db/types';
-import { CreatedUserResponse, UserCreateType } from '../types';
+import { CreatedUserResponse, UserCreateType, UserEntity } from '../types';
 
 export interface IUsersRepository {
   getUsers(skip: number, limit: number): Promise<UserDbEntity[]>;
@@ -10,17 +10,17 @@ export interface IUsersRepository {
 
   deleteUserByid(id: string): Promise<boolean>;
 
-  findUserByLogin(login: string): Promise<UserDbEntity | null>;
+  findUserByLogin(login: string): Promise<UserEntity | null>;
 
-  findUserByLoginOrThrow(login: string): Promise<UserDbEntity | null>;
+  findUserByLoginOrThrow(login: string): Promise<UserEntity | null>;
 
-  findUserByEmail(email: string): Promise<UserDbEntity | null>;
+  findUserByEmail(email: string): Promise<UserEntity | null>;
 
-  findUserByEmailOrThrow(email: string): Promise<UserDbEntity | null>;
+  findUserByEmailOrThrow(email: string): Promise<UserEntity | null>;
 
-  findUserByUserId(id: string): Promise<UserDbEntity | null>;
+  findUserByUserId(id: string): Promise<UserEntity | null>;
 
-  findUserByConfirmationCode(code: string): Promise<UserDbEntity | null>;
+  findUserByConfirmationCode(code: string): Promise<UserEntity | null>;
 
   deleteAllUsers(): void;
 

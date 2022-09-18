@@ -1,8 +1,8 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 import { removeObjectIdOption } from 'src/const';
-import { MongooseModelNamed } from 'src/db/const';
-import { PostsModel } from 'src/db/models.mongoose';
+import { MongooseModelNamed } from 'src/db/mongodb/const';
+import { PostsModel } from 'src/db/mongodb/models.mongoose';
 import { LikePostDbType, LikesStatus, PostDbEntity } from 'src/db/types';
 import { IBloggersRepository } from 'src/feature/bloggers/repositories/IBloggersRepository';
 import { RepositoryProviderKeys } from 'src/types';

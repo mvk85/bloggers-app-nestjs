@@ -1,4 +1,4 @@
-import { BloggerDbEntity, IdType } from 'src/db/types';
+import { IdType } from 'src/db/types';
 import { PaginationData } from 'src/types';
 import { PostResponseEntity } from '../posts/types';
 

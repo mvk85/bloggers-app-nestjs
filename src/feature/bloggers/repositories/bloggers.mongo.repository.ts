@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 import { removeObjectIdOption } from 'src/const';
-import { MongooseModelNamed } from 'src/db/const';
-import { BloggersModel } from 'src/db/models.mongoose';
+import { MongooseModelNamed } from 'src/db/mongodb/const';
+import { BloggersModel } from 'src/db/mongodb/models.mongoose';
 import { BloggerDbEntity } from 'src/db/types';
 import { generateCustomId } from 'src/utils';
 import { BloggerEntity, FilterBloggers } from '../types';

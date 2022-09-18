@@ -22,7 +22,8 @@ export class PostsPgRepository implements IPostsRepository {
   private postMapper: PostsMapper = new PostsMapper();
 
   constructor(
-    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
     @Inject(RepositoryProviderKeys.bloggers)
     private readonly bloggersRepository: IBloggersRepository,
   ) {}
@@ -259,9 +260,9 @@ export class PostsPgRepository implements IPostsRepository {
       update "Posts" 
       set 
         title = $1, 
-        shortDescription = $2, 
+        "shortDescription" = $2, 
         content = $3, 
-        bloggerId = $4
+        "bloggerId" = $4
       where
         id = $5
       `,

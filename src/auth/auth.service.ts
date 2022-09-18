@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { UserDbEntity } from 'src/db/types';
-import { UserCreateFields } from 'src/feature/users/types';
+import { UserCreateFields, UserEntity } from 'src/feature/users/types';
 import { UsersService } from 'src/feature/users/users.service';
 import { AuthRepository } from './auth.repository';
 import { EmailManager } from './email-manager';
@@ -20,7 +19,7 @@ export class AuthService {
   async getUserByCredentials(
     login: string,
     password: string,
-  ): Promise<UserDbEntity | null> {
+  ): Promise<UserEntity | null> {
     const user = await this.usersService.getUserByLogin(login);
 
     if (!user) return null;

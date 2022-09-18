@@ -18,6 +18,6 @@ export class Posts {
   @Column()
   addedAt: Date;
 
-  @ManyToOne(() => Bloggers, (blogger) => blogger.id)
+  @ManyToOne(() => Bloggers, (blogger) => blogger.id, { onDelete: 'CASCADE' })
   blogger: Bloggers;
 }

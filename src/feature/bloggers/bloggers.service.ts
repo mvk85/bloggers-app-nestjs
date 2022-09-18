@@ -88,11 +88,12 @@ export class BloggersService {
       name,
       youtubeUrl,
     });
-    const createdBlogger = await this.bloggersRepository.getBloggerById(
-      newBloggerId,
-    );
 
-    return createdBlogger;
+    return {
+      id: newBloggerId,
+      name,
+      youtubeUrl,
+    };
   }
 
   async deleteBloggerById(id: string) {

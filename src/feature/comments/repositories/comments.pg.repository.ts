@@ -14,7 +14,8 @@ export class CommentsPgRepository implements ICommentsRepository {
   private readonly commentsMapper: CommentsMapper;
 
   constructor(
-    @InjectDataSource() private readonly dataSource: DataSource,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
     @Inject(RepositoryProviderKeys.users)
     private readonly usersRepository: IUsersRepository,
   ) {

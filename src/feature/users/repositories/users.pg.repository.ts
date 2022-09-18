@@ -2,7 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { UserDbEntity } from 'src/db/types';
 import { DataSource } from 'typeorm';
-import { CreatedUserResponse, UserCreateType } from '../types';
+import { CreatedUserResponse, UserCreateType, UserEntity } from '../types';
 import { IUsersRepository } from './IUsersRepository';
 
 export class UsersPgRepository implements IUsersRepository {
@@ -62,7 +62,7 @@ export class UsersPgRepository implements IUsersRepository {
     return !!result[1];
   }
 
-  async findUserByLogin(login: string): Promise<UserDbEntity> {
+  async findUserByLogin(login: string): Promise<UserEntity> {
     const result = await this.dataSource.query(
       `
         select "passwordHash", "isConfirmed", "confirmCode", "login", "email", "id"
@@ -75,7 +75,7 @@ export class UsersPgRepository implements IUsersRepository {
     return result[0];
   }
 
-  async findUserByLoginOrThrow(login: string): Promise<UserDbEntity> {
+  async findUserByLoginOrThrow(login: string): Promise<UserEntity> {
     const user = this.findUserByLogin(login);
 
     if (!user) {
@@ -85,7 +85,7 @@ export class UsersPgRepository implements IUsersRepository {
     return user;
   }
 
-  async findUserByEmail(email: string): Promise<UserDbEntity> {
+  async findUserByEmail(email: string): Promise<UserEntity> {
     const result = await this.dataSource.query(
       `
         select "passwordHash", "isConfirmed", "confirmCode", "login", "email", "id"
@@ -98,7 +98,7 @@ export class UsersPgRepository implements IUsersRepository {
     return result[0];
   }
 
-  async findUserByEmailOrThrow(email: string): Promise<UserDbEntity> {
+  async findUserByEmailOrThrow(email: string): Promise<UserEntity> {
     const user = this.findUserByEmail(email);
 
     if (!user) {

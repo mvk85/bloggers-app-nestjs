@@ -13,6 +13,7 @@ import {
   UserCreateType,
   CreatedUserResponse,
   RegisteredUserResponse,
+  UserEntity,
 } from './types';
 
 @Injectable()
@@ -40,19 +41,19 @@ export class UsersService {
     };
   }
 
-  async getUserById(id: string): Promise<UserDbEntity | null> {
+  async getUserById(id: string): Promise<UserEntity | null> {
     return this.usersRepository.findUserByUserId(id);
   }
 
-  async getUserByLogin(login: string): Promise<UserDbEntity | null> {
+  async getUserByLogin(login: string): Promise<UserEntity | null> {
     return this.usersRepository.findUserByLogin(login);
   }
 
-  async getUserByEmail(email: string): Promise<UserDbEntity | null> {
+  async getUserByEmail(email: string): Promise<UserEntity | null> {
     return this.usersRepository.findUserByEmail(email);
   }
 
-  async getUserByConfirmationCode(code: string): Promise<UserDbEntity | null> {
+  async getUserByConfirmationCode(code: string): Promise<UserEntity | null> {
     return this.usersRepository.findUserByConfirmationCode(code);
   }
 
@@ -97,7 +98,7 @@ export class UsersService {
     return isDeleted;
   }
 
-  async updateConfirmationCode(user: UserDbEntity) {
+  async updateConfirmationCode(user: UserEntity) {
     const newCode = generateConfirmCode();
     const isUpdated = await this.usersRepository.updateConfirmationCode(
       user.id,

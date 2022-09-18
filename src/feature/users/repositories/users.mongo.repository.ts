@@ -1,11 +1,11 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
 import { projectionUserItem } from 'src/const';
-import { MongooseModelNamed } from 'src/db/const';
-import { UsersModel } from 'src/db/models.mongoose';
+import { MongooseModelNamed } from 'src/db/mongodb/const';
+import { UsersModel } from 'src/db/mongodb/models.mongoose';
 import { UserDbEntity } from 'src/db/types';
 import { generateCustomId } from 'src/utils';
-import { CreatedUserResponse, UserCreateType } from '../types';
+import { CreatedUserResponse, UserCreateType, UserEntity } from '../types';
 import { IUsersRepository } from './IUsersRepository';
 
 @Injectable()
@@ -53,13 +53,13 @@ export class UsersMongoRepository implements IUsersRepository {
     return result.deletedCount === 1;
   }
 
-  async findUserByLogin(login: string): Promise<UserDbEntity | null> {
+  async findUserByLogin(login: string): Promise<UserEntity | null> {
     const user = await this.usersModel.findOne({ login });
 
     return user;
   }
 
-  async findUserByLoginOrThrow(login: string): Promise<UserDbEntity | null> {
+  async findUserByLoginOrThrow(login: string): Promise<UserEntity | null> {
     const user = this.findUserByLogin(login);
 
     if (!user) {
@@ -69,13 +69,13 @@ export class UsersMongoRepository implements IUsersRepository {
     return user;
   }
 
-  async findUserByEmail(email: string): Promise<UserDbEntity | null> {
+  async findUserByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.usersModel.findOne({ email });
 
     return user;
   }
 
-  async findUserByEmailOrThrow(email: string): Promise<UserDbEntity | null> {
+  async findUserByEmailOrThrow(email: string): Promise<UserEntity | null> {
     const user = this.findUserByEmail(email);
 
     if (!user) {

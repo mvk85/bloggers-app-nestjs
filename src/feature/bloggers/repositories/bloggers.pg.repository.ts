@@ -6,7 +6,10 @@ import { IBloggersRepository } from './IBloggersRepository';
 
 @Injectable()
 export class BloggersPgRepository implements IBloggersRepository {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
+  ) {}
 
   async getBloggers(
     SearchNameTerm: string,
@@ -16,7 +19,7 @@ export class BloggersPgRepository implements IBloggersRepository {
     const result = await this.dataSource.query(
       `
     select "id", "name", "youtubeUrl" 
-    from "Bloggers" 
+    from "Bloggers"
     where "name" like '%'||$1||'%'
     limit $2 
     offset $3

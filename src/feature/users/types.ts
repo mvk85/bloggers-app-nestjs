@@ -32,3 +32,12 @@ export type RegisteredUserResponse = {
   login: string;
   email: string;
 };
+
+export type UserEntity = {
+  id: IdType;
+  login: string;
+  passwordHash: string;
+  email: string;
+  isConfirmed: boolean;
+  confirmCode?: string | null;
+};
