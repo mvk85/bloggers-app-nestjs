@@ -115,7 +115,7 @@ export class CommentsPgRepository implements ICommentsRepository {
     try {
       const result = await this.dataSource.query(
         `
-        select
+      select
         c.id,
         c.content,
         c."addedAt",

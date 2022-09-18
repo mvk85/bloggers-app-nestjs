@@ -20,9 +20,9 @@ export class CommentLikes {
   @PrimaryColumn()
   commentId: string;
 
-  @ManyToOne(() => Comments, (comment) => comment.id)
+  @ManyToOne(() => Comments, (comment) => comment.id, { onDelete: 'CASCADE' })
   comment: Comments;
 
-  @ManyToOne(() => Users, (user) => user.id)
+  @ManyToOne(() => Users, (user) => user.id, { onDelete: 'CASCADE' })
   user: Users;
 }

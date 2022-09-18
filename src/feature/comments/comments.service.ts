@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { RepositoryProviderKeys } from 'src/types';
+import { CommentResponseType } from '../posts/types';
 import { ICommentsRepository } from './repositories/ICommentsRepository';
 
 @Injectable()
@@ -15,10 +16,19 @@ export class CommentsService {
     return isDeleted;
   }
 
-  async getById(id: string, userId?: string) {
-    const comment = await this.commentsRepository.getCommentById(id, userId);
+  async getById(
+    id: string,
+    userId?: string,
+  ): Promise<CommentResponseType | null> {
+    try {
+      const comment = await this.commentsRepository.getCommentById(id, userId);
 
-    return comment;
+      return comment;
+    } catch (e) {
+      console.log(e);
+
+      return null;
+    }
   }
 
   async updateById(id: string, fields: { content: string }) {

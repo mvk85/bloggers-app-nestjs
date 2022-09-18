@@ -13,9 +13,9 @@ export class Comments {
   @Column()
   addedAt: Date;
 
-  @ManyToOne(() => Users, (user) => user.id)
+  @ManyToOne(() => Users, (user) => user.id, { onDelete: 'CASCADE' })
   user: Users;
 
-  @ManyToOne(() => Posts, (post) => post.id)
+  @ManyToOne(() => Posts, (post) => post.id, { onDelete: 'CASCADE' })
   post: Posts;
 }

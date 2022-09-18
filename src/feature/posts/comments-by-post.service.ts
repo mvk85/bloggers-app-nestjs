@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { PaginationParams, RepositoryProviderKeys } from 'src/types';
 import { generatePaginationData } from 'src/utils';
 import { ICommentsRepository } from '../comments/repositories/ICommentsRepository';
@@ -15,11 +15,18 @@ export class CommentsByPostService {
   async createComment(
     commentFields: CommentCreateFields,
   ): Promise<CommentResponseEntity> {
-    const createdComment = await this.commentsRepository.createComment(
-      commentFields,
-    );
+    try {
+      const createdComment = await this.commentsRepository.createComment(
+        commentFields,
+      );
 
-    return createdComment;
+      return createdComment;
+    } catch (e) {
+      console.error(e);
+      throw new BadRequestException(
+        'Comment was not created, data is not correct',
+      );
+    }
   }
 
   async getCommentsByPostId(
