@@ -19,7 +19,7 @@ export class TestBloggers {
   }
 
   public generateName() {
-    return faker.name.fullName();
+    return `name ${faker.lorem.word(10)}`;
   }
 
   public generateUrl() {

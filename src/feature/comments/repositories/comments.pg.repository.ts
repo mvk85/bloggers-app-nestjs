@@ -194,8 +194,7 @@ export class CommentsPgRepository implements ICommentsRepository {
   async deleteAllComments(): Promise<void> {
     await this.dataSource.query(
       `
-      delete from "CommentLikes";
-      delete from "Comments";
+      TRUNCATE "Comments" CASCADE;
       `,
     );
   }

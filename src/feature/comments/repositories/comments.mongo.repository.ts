@@ -127,7 +127,6 @@ export class CommentsMongoRepository implements ICommentsRepository {
   }
 
   async addOrUpdateLike(commentId: string, likeItem: LikeCommentFieldType) {
-    // TODO разделить на отдельные методы
     const likeExist = await this.commentsModel.findOne({
       id: commentId,
       'likes.data': { $elemMatch: { userId: likeItem.userId } },

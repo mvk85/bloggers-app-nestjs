@@ -112,7 +112,6 @@ describe('posts api e2e tests', () => {
         helperPosts.expectPostSchema(response.body);
       });
 
-      // TODO узнать, хорошая ли практика так делать тест!
       it('Should return post after created when the data is correct', async () => {
         const postCreateFields = await testPosts.makeCreatedObject();
         const apiUrlCreated = urlBuilder.addSubdirectory('posts').build();
@@ -367,7 +366,6 @@ describe('posts api e2e tests', () => {
         expect(response.status).toEqual(HttpStatus.NOT_FOUND);
       });
 
-      // TODO не понятно как правильно должно работать? (userId в jwt не корректный)
       it('Should return 400 when jwt is not correct', async () => {
         const { createObject, post } = await testComments.makeCreatedObject();
         const apiUrl = urlBuilder

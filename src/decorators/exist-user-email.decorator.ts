@@ -11,7 +11,6 @@ export function ExistsUserByEmail(validationOptions?: ValidationOptions) {
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      // TODO дублируется логика NotExistsUserByEmailRule (разница в инверсии), можно ли переиспользовать?
       validator: ExistsUserByEmailRule,
     });
   };

@@ -14,7 +14,6 @@ export class CommentCredentialsGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const req: Request = context.switchToHttp().getRequest();
     const commentId = req.params.id;
-    // TODO убрать
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const userId = req.user.userId;

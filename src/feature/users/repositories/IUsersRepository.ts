@@ -1,8 +1,7 @@
-import { UserDbEntity } from 'src/db/types';
 import { CreatedUserResponse, UserCreateType, UserEntity } from '../types';
 
 export interface IUsersRepository {
-  getUsers(skip: number, limit: number): Promise<UserDbEntity[]>;
+  getUsers(skip: number, limit: number): Promise<CreatedUserResponse[]>;
 
   getCountUsers(): Promise<number>;
 

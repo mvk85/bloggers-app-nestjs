@@ -73,6 +73,7 @@ describe('bloggers api', () => {
         page: DEFAULT_PAGE_NUMBER,
       };
       const apiUrl = urlBuilder.addSubdirectory('bloggers').build();
+
       const response = await request(app.getHttpServer()).get(apiUrl);
 
       expect(response.status).toEqual(HttpStatus.OK);
@@ -81,7 +82,6 @@ describe('bloggers api', () => {
       helperBloggers.expectBloggerSchema(response.body.items[1]);
     });
 
-    // TODO should rewrite on free tests with use AAA (arange, act, assert)
     it('should return bloggers when we use pagination', async () => {
       const blogger1 = await testBloggers.make();
       const blogger2 = await testBloggers.make();

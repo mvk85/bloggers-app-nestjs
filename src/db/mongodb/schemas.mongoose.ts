@@ -30,7 +30,7 @@ export const postsSchema = new mongoose.Schema<PostDbEntity>({
   content: { type: String, required: true },
   bloggerId: { type: String, required: true },
   bloggerName: { type: String, required: true },
-  addedAt: { type: String, requered: true }, // TODO разобраться с типом даты в монге
+  addedAt: { type: String, requered: true },
   likes: {
     data: [
       {

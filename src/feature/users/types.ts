@@ -8,7 +8,7 @@ export type CreatedUserType = {
 };
 
 export type ResponseUsers = PaginationData & {
-  items: UserDbEntity[];
+  items: CreatedUserResponse[];
 };
 
 export type UserCreateFields = {

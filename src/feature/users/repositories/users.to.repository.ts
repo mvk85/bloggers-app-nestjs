@@ -1,7 +1,6 @@
 import { NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/db/typeorm/entity/Users';
-import { UserDbEntity } from 'src/db/types';
 import { Repository } from 'typeorm';
 import { UserCreateType, CreatedUserResponse, UserEntity } from '../types';
 import { IUsersRepository } from './IUsersRepository';
@@ -12,12 +11,18 @@ export class UsersToRepository implements IUsersRepository {
     private readonly usersTypeormRepository: Repository<Users>,
   ) {}
 
-  getUsers(skip: number, limit: number): Promise<UserDbEntity[]> {
-    throw new Error('Method not implemented.');
+  getUsers(skip: number, limit: number): Promise<UserEntity[]> {
+    return this.usersTypeormRepository
+      .createQueryBuilder('users')
+      .select('users.id', 'id')
+      .addSelect('users.login', 'login')
+      .skip(skip)
+      .take(limit)
+      .getRawMany();
   }
 
   getCountUsers(): Promise<number> {
-    throw new Error('Method not implemented.');
+    return this.usersTypeormRepository.count();
   }
 
   async createUser(userCreate: UserCreateType): Promise<CreatedUserResponse> {
@@ -36,8 +41,14 @@ export class UsersToRepository implements IUsersRepository {
     };
   }
 
-  deleteUserByid(id: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+  async deleteUserByid(id: string): Promise<boolean> {
+    const result = await this.usersTypeormRepository
+      .createQueryBuilder()
+      .delete()
+      .where('id = :id', { id })
+      .execute();
+
+    return !!result.affected;
   }
 
   findUserByLogin(login: string): Promise<UserEntity> {
@@ -80,11 +91,25 @@ export class UsersToRepository implements IUsersRepository {
     await this.usersTypeormRepository.delete({});
   }
 
-  registrationConfirmed(id: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+  async registrationConfirmed(id: string): Promise<boolean> {
+    const result = await this.usersTypeormRepository
+      .createQueryBuilder()
+      .update()
+      .set({ isConfirmed: true })
+      .where('id = :id', { id })
+      .execute();
+
+    return !!result.affected;
   }
 
-  updateConfirmationCode(id: string, code: string): Promise<boolean> {
-    throw new Error('Method not implemented.');
+  async updateConfirmationCode(id: string, code: string): Promise<boolean> {
+    const result = await this.usersTypeormRepository
+      .createQueryBuilder()
+      .update()
+      .set({ confirmCode: code })
+      .where('id = :id', { id })
+      .execute();
+
+    return !!result.affected;
   }
 }

@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserDbEntity } from 'src/db/types';
 import { PaginationParams, RepositoryProviderKeys } from 'src/types';
 import {
   generateConfirmCode,
@@ -36,7 +35,7 @@ export class UsersService {
       items: users,
       pagesCount,
       pageSize,
-      totalCount: usersCount,
+      totalCount: Number(usersCount),
       page: pageNumber,
     };
   }

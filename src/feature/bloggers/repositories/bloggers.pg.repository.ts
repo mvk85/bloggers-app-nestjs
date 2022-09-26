@@ -106,7 +106,7 @@ export class BloggersPgRepository implements IBloggersRepository {
   async deleteAllBloggers() {
     await this.dataSource.query(
       `
-      delete from "Bloggers"
+      TRUNCATE "Bloggers" CASCADE;
       `,
     );
   }

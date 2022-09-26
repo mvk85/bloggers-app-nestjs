@@ -149,7 +149,7 @@ export class PostsPgRepository implements IPostsRepository {
 
       return postMapper.mapPost(postRaw);
     } catch (e) {
-      console.error(e); // TODO как правильно обработать ошибки из бд?
+      console.error(e);
       return null;
     }
   }
@@ -391,8 +391,7 @@ export class PostsPgRepository implements IPostsRepository {
   async deleteAllPosts(): Promise<void> {
     await this.dataSource.query(
       `
-      delete from "PostLikes";
-      delete from "Posts";
+      TRUNCATE "Posts" CASCADE;
       `,
     );
   }

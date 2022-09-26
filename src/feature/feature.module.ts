@@ -66,8 +66,6 @@ import { ConfigModule } from '@nestjs/config';
     InjectUserIdFromJwt,
     ValidateCommentId,
   ],
-  exports: [
-    UsersService, // TODO избавиться от экспорта сервиса
-  ],
+  exports: [UsersService],
 })
 export class FeatureModule {}

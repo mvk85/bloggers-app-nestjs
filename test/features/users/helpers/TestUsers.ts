@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { TestingModule } from '@nestjs/testing';
 import { IUsersRepository } from 'src/feature/users/repositories/IUsersRepository';
-import { UserCreateType } from 'src/feature/users/types';
+import { CreatedUserResponse, UserCreateType } from 'src/feature/users/types';
 import { RepositoryProviderKeys } from 'src/types';
 import { generateHash } from 'src/utils';
 
@@ -31,6 +31,15 @@ export class TestUsers {
     const createdUser = await this.usersRepository.createUser(newUser);
 
     return createdUser;
+  }
+
+  public async makePublicUser(pwd?: string): Promise<CreatedUserResponse> {
+    const user = await this.make(pwd);
+
+    return {
+      id: user.id,
+      login: user.login,
+    };
   }
 
   public makeCreatedObject() {

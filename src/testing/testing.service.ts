@@ -26,6 +26,5 @@ export class TestingService {
     await this.bloggersRepository.deleteAllBloggers();
     await this.usersRepository.deleteAllUsers();
     await this.authRepository.clearBlackListRefreshTokens();
-    // TODO need to do a cleanup of likes or not?
   }
 }

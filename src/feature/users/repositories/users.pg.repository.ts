@@ -8,10 +8,10 @@ import { IUsersRepository } from './IUsersRepository';
 export class UsersPgRepository implements IUsersRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async getUsers(skip: number, limit: number): Promise<UserDbEntity[]> {
+  async getUsers(skip: number, limit: number): Promise<CreatedUserResponse[]> {
     const result = await this.dataSource.query(
       `
-      select "id", "login", "email" 
+      select "id", "login" 
       from "Users" 
       limit $1 
       offset $2
@@ -137,7 +137,7 @@ export class UsersPgRepository implements IUsersRepository {
   async deleteAllUsers(): Promise<void> {
     await this.dataSource.query(
       `
-      delete from "Users"
+      TRUNCATE "Users" CASCADE;
       `,
     );
   }
